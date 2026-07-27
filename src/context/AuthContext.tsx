@@ -28,6 +28,8 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<AuthUser>;
   register: (payload: RegisterPayload) => Promise<AuthUser>;
   logout: () => void;
+  fetchUsers: () => Promise<AuthUser[]>;
+  updateUser: (id: string, updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'profession' | 'businessName'>>) => Promise<AuthUser | undefined>;
 };
 
 const CURRENT_USER_KEY = 'quickserve_active_user';
@@ -163,7 +165,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     saveActiveUser(null);
   };
 
-  const value = useMemo(() => ({ user, login, register, logout }), [user]);
+  const fetchUsers = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const storedUsers = getStoredUsers();
+    return [...storedUsers, ...MOCK_USERS.filter((mock) => !storedUsers.some((user) => user.email === mock.email))];
+  };
+
+  const updateUser = async (
+    id: string,
+    updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'profession' | 'businessName'>>,
+  ) => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const storedUsers = getStoredUsers();
+    const knownUsers = [...storedUsers, ...MOCK_USERS.filter((mock) => !storedUsers.some((user) => user.email === mock.email))];
+    const index = knownUsers.findIndex((user) => user.id === id);
+    if (index === -1) return undefined;
+
+    const updatedUser = { ...knownUsers[index], ...updates };
+    const storedIndex = storedUsers.findIndex((user) => user.id === id);
+    if (storedIndex >= 0) {
+      storedUsers[storedIndex] = updatedUser;
+    } else {
+      storedUsers.push(updatedUser);
+    }
+
+    saveUsers(storedUsers);
+    if (user?.id === id) {
+      setUser(updatedUser);
+      saveActiveUser(updatedUser);
+    }
+    return updatedUser;
+  };
+
+  const value = useMemo(() => ({ user, login, register, logout, fetchUsers, updateUser }), [user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

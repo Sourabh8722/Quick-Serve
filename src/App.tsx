@@ -28,6 +28,7 @@ import CustomerRoute from './components/auth/CustomerRoute';
 import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
 import ProviderDashboard from './pages/provider/ProviderDashboard';
+import ProviderProfile from './pages/provider/ProviderProfile';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ function App() {
 
           {/* Provider Routes */}
           <Route path="/provider/dashboard" element={<ProviderRoute><ProviderDashboard /></ProviderRoute>} />
+          <Route path="/provider/profile" element={<ProviderRoute><ProviderProfile /></ProviderRoute>} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

@@ -34,6 +34,22 @@ export default function Profile() {
                 <span className="block font-medium text-[var(--color-text-main)]">Role</span>
                 <span>{user.role}</span>
               </div>
+              {user.role === 'SERVICE_PROVIDER' && (
+                <>
+                  <div>
+                    <span className="block font-medium text-[var(--color-text-main)]">Business</span>
+                    <span>{user.businessName || 'Not provided'}</span>
+                  </div>
+                  <div>
+                    <span className="block font-medium text-[var(--color-text-main)]">Service category</span>
+                    <span>{user.profession || 'Not provided'}</span>
+                  </div>
+                  <div>
+                    <span className="block font-medium text-[var(--color-text-main)]">Provider status</span>
+                    <span>{user.providerStatus ?? 'N/A'}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -41,6 +57,13 @@ export default function Profile() {
             <div>
               <h2 className="font-semibold text-lg text-[var(--color-text-main)] mb-4">Booking Preferences</h2>
               <p className="text-sm text-[var(--color-text-muted)]">Update your default settings and contact preferences here.</p>
+              {user.role === 'SERVICE_PROVIDER' && user.providerStatus !== 'APPROVED' && (
+                <div className="mt-4 rounded-2xl bg-amber-50 p-4 text-amber-900">
+                  {user.providerStatus === 'PENDING'
+                    ? 'Your provider application is pending approval. You will be able to manage booking requests once approved.'
+                    : 'Your provider account has been rejected. Please contact support for next steps.'}
+                </div>
+              )}
             </div>
             <button onClick={logout} className="mt-6 w-full bg-[var(--color-primary-600)] text-white rounded-2xl py-3 font-semibold hover:bg-[var(--color-primary-800)] transition-colors">
               Sign out

@@ -1,10 +1,12 @@
-type BookingStatus = 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
+type BookingStatus = 'Pending' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
 
 export type Booking = {
   id: string;
   serviceId: number;
   serviceName: string;
   provider: string;
+  providerEmail?: string;
+  providerName?: string;
   customerEmail: string;
   customerName: string;
   date: string;
@@ -42,12 +44,41 @@ export async function fetchBookings(customerEmail: string): Promise<Booking[]> {
   return stored.filter((booking) => booking.customerEmail === customerEmail);
 }
 
+export async function fetchProviderBookings(providerEmail: string): Promise<{ requests: Booking[]; jobs: Booking[] }> {
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  const stored = readStored();
+  const requests = stored.filter((booking) => booking.status === 'Pending');
+  const jobs = stored.filter(
+    (booking) => booking.providerEmail === providerEmail && ['Confirmed', 'In Progress'].includes(booking.status),
+  );
+  return { requests, jobs };
+}
+
+export async function fetchAllBookings(): Promise<Booking[]> {
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  return readStored();
+}
+
+export async function updateBooking(
+  id: string,
+  updates: Partial<Pick<Booking, 'status' | 'providerEmail' | 'providerName'>>,
+): Promise<Booking | undefined> {
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  const stored = readStored();
+  const index = stored.findIndex((booking) => booking.id === id);
+  if (index === -1) return undefined;
+  const updated = { ...stored[index], ...updates };
+  stored[index] = updated;
+  writeStored(stored);
+  return updated;
+}
+
 export async function createBooking(payload: Omit<Booking, 'id' | 'status' | 'createdAt'>): Promise<Booking> {
   await new Promise((resolve) => setTimeout(resolve, 300));
   const booking: Booking = {
     ...payload,
     id: `QS-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`,
-    status: 'Confirmed',
+    status: 'Pending',
     createdAt: new Date().toISOString(),
   };
 
@@ -63,4 +94,4 @@ export async function getBookingById(id: string): Promise<Booking | undefined> {
   return stored.find((booking) => booking.id === id);
 }
 
-export default { fetchBookings, createBooking, getBookingById };
+export default { fetchBookings, fetchProviderBookings, fetchAllBookings, createBooking, getBookingById, updateBooking };

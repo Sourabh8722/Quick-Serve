@@ -1,17 +1,43 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import type { AuthUser } from '../../context/AuthContext';
 
-const mockProviders = [
-  { id: 1, name: 'Amit Patel', category: 'Electrician', rating: 4.6, jobs: 89 },
-  { id: 2, name: 'Jane Smith', category: 'Cleaning', rating: 4.8, jobs: 124 },
-  { id: 3, name: 'Emily Loft', category: 'AC Repair', rating: 4.7, jobs: 156 },
-];
+const statusStyles = {
+  APPROVED: 'bg-emerald-100 text-emerald-700',
+  PENDING: 'bg-amber-100 text-amber-700',
+  REJECTED: 'bg-rose-100 text-rose-700',
+};
 
 export default function ProvidersManagement() {
+  const { fetchUsers, updateUser } = useAuth();
+  const [providers, setProviders] = useState<AuthUser[]>([]);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const users = await fetchUsers();
+      setProviders(users.filter((user) => user.role === 'SERVICE_PROVIDER'));
+      setLoading(false);
+    };
+
+    load();
+  }, [fetchUsers]);
+
   const filtered = useMemo(
-    () => mockProviders.filter(provider => provider.name.toLowerCase().includes(search.toLowerCase()) || provider.category.toLowerCase().includes(search.toLowerCase())),
-    [search],
+    () => providers.filter((provider) =>
+      provider.name.toLowerCase().includes(search.toLowerCase()) ||
+      (provider.profession ?? '').toLowerCase().includes(search.toLowerCase()) ||
+      (provider.businessName ?? '').toLowerCase().includes(search.toLowerCase()),
+    ),
+    [providers, search],
   );
+
+  const handleApproval = async (provider: AuthUser, approve: boolean) => {
+    const updated = await updateUser(provider.id, { providerStatus: approve ? 'APPROVED' : 'REJECTED' });
+    setProviders((current) => current.map((item) => (item.id === provider.id && updated ? updated : item)));
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -21,15 +47,12 @@ export default function ProvidersManagement() {
           <p className="text-[var(--color-text-muted)]">Manage service providers and approvals.</p>
         </div>
 
-        <div className="flex gap-3">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search providers..."
-            className="border border-[var(--color-border-main)] rounded-2xl px-4 py-3 text-sm outline-none"
-          />
-          <button className="bg-[var(--color-primary-600)] text-white rounded-2xl px-4 py-3 font-semibold hover:bg-[var(--color-primary-800)] transition-colors">Add Provider</button>
-        </div>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search providers..."
+          className="border border-[var(--color-border-main)] rounded-2xl px-4 py-3 text-sm outline-none"
+        />
       </div>
 
       <div className="bg-white border border-[var(--color-border-main)] rounded-3xl overflow-hidden">
@@ -37,24 +60,49 @@ export default function ProvidersManagement() {
           <thead className="bg-gray-50 text-[var(--color-text-muted)] uppercase text-xs tracking-wider">
             <tr>
               <th className="px-6 py-4">Provider</th>
-              <th className="px-6 py-4">Category</th>
-              <th className="px-6 py-4">Rating</th>
-              <th className="px-6 py-4">Jobs Completed</th>
+              <th className="px-6 py-4">Business</th>
+              <th className="px-6 py-4">Service category</th>
+              <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((provider) => (
-              <tr key={provider.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{provider.name}</td>
-                <td className="px-6 py-4">{provider.category}</td>
-                <td className="px-6 py-4">{provider.rating.toFixed(1)}</td>
-                <td className="px-6 py-4">{provider.jobs}</td>
-                <td className="px-6 py-4">
-                  <button className="text-sm text-[var(--color-primary-600)] hover:underline">View</button>
-                </td>
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">Loading providers…</td>
               </tr>
-            ))}
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">No providers found.</td>
+              </tr>
+            ) : (
+              filtered.map((provider) => (
+                <tr key={provider.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{provider.name}</td>
+                  <td className="px-6 py-4">{provider.businessName ?? '—'}</td>
+                  <td className="px-6 py-4">{provider.profession ?? '—'}</td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[provider.providerStatus ?? 'PENDING']}`}>
+                      {provider.providerStatus ?? 'PENDING'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 space-x-2">
+                    <button
+                      onClick={() => handleApproval(provider, true)}
+                      className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleApproval(provider, false)}
+                      className="rounded-full bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

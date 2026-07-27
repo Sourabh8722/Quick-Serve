@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { Phone, MessageSquare, MapPin, CheckCircle2, Clock, Map as MapIcon, Crosshair } from 'lucide-react';
+import { Phone, MessageSquare, CheckCircle2, Clock, Map as MapIcon, Crosshair } from 'lucide-react';
 
 const timelineSteps = [
   { status: 'Booking Confirmed', time: '10:00 AM', completed: true },

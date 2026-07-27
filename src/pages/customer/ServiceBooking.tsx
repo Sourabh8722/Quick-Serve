@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import servicesData from '../../data/services';
+import { useAuth } from '../../context/AuthContext';
+import bookingsApi from '../../api/bookingsApi';
 import { Calendar as CalendarIcon, Clock, MapPin, CreditCard, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const timeSlots = ['09:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
@@ -7,22 +10,57 @@ const timeSlots = ['09:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
 export default function ServiceBooking() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Mock service data based on ID
-  const service = { name: 'Deep Kitchen Cleaning', price: 1500, provider: 'Jane Smith', fee: 50, tax: 270 };
-  const totalAmount = service.price + service.fee + service.tax;
+  // Lookup service data based on ID
+  const serviceId = Number(id);
+  const found = servicesData.find(s => s.id === serviceId);
+  const service = found ?? { name: 'Unknown Service', price: 0, provider: '—' } as any;
+
+  const convenienceFee = Math.max(50, Math.round(service.price * 0.05));
+  const tax = Math.round(service.price * 0.18);
+  const totalAmount = service.price + convenienceFee + tax;
 
   const handleNext = () => setStep(prev => Math.min(prev + 1, 5));
   const handlePrev = () => setStep(prev => Math.max(prev - 1, 1));
   
-  const handleConfirm = () => {
-    // Navigate to confirmation or tracking page
-    navigate(`/track/${Math.floor(Math.random() * 10000)}`);
+  const handleConfirm = async () => {
+    setError('');
+
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(`/book/${id}`)}`);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const booking = await bookingsApi.createBooking({
+        serviceId,
+        serviceName: service.name,
+        provider: service.provider,
+        customerEmail: user.email,
+        customerName: user.name,
+        date,
+        time,
+        address,
+        paymentMethod,
+        price: service.price,
+        total: totalAmount,
+      });
+
+      navigate(`/track/${booking.id}`);
+    } catch {
+      setError('Unable to confirm booking. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,6 +83,11 @@ export default function ServiceBooking() {
         
         {/* Left Form Area */}
         <div className="flex-1 p-6 md:p-8 border-b md:border-b-0 md:border-r border-[var(--color-border-main)]">
+          {!user && (
+            <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 text-sm">
+              You must sign in before confirming a booking. When you click "Confirm & Pay," you will be redirected to login.
+            </div>
+          )}
           {step === 1 && (
             <div>
               <h2 className="text-2xl font-bold text-[var(--color-text-main)] mb-6 flex items-center gap-2">
@@ -57,6 +100,7 @@ export default function ServiceBooking() {
                   type="date" 
                   value={date} 
                   onChange={e => setDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
                   className="w-full p-3 border border-[var(--color-border-main)] rounded-xl outline-none focus:border-[var(--color-primary-600)]"
                 />
               </div>
@@ -143,9 +187,10 @@ export default function ServiceBooking() {
               
               <button 
                 onClick={handleConfirm}
-                className="bg-[var(--color-success-800)] text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-700 transition-colors shadow-md w-full"
+                disabled={loading}
+                className={`bg-[var(--color-success-800)] text-white px-8 py-3 rounded-full font-bold text-lg transition-colors shadow-md w-full ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-green-700'}`}
               >
-                Confirm & Pay ₹{totalAmount}
+                {loading ? 'Confirming…' : `Confirm & Pay ₹${totalAmount}`}
               </button>
             </div>
           )}
@@ -174,6 +219,7 @@ export default function ServiceBooking() {
               </button>
             </div>
           )}
+          {error && <div className="mt-4 text-sm text-rose-600">{error}</div>}
         </div>
 
         {/* Right Summary Area */}
@@ -203,11 +249,11 @@ export default function ServiceBooking() {
             </div>
             <div className="flex justify-between text-[var(--color-text-muted)]">
               <span>Convenience Fee</span>
-              <span>₹{service.fee}</span>
+              <span>₹{convenienceFee}</span>
             </div>
             <div className="flex justify-between text-[var(--color-text-muted)]">
               <span>Taxes</span>
-              <span>₹{service.tax}</span>
+              <span>₹{tax}</span>
             </div>
             <div className="flex justify-between font-bold text-lg text-[var(--color-primary-800)] pt-3 border-t border-gray-200">
               <span>Total</span>

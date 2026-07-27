@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -10,10 +10,13 @@ import {
   Bell,
   Search
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminSidebar = () => {
   const location = useLocation();
-  
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
     { name: 'Providers', path: '/admin/providers', icon: <Briefcase size={20} /> },
@@ -58,7 +61,7 @@ const AdminSidebar = () => {
       </div>
 
       <div className="p-4 border-t border-[var(--color-border-main)]">
-        <button className="flex items-center gap-3 px-3 py-2.5 w-full rounded-md text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50 hover:text-red-600 transition-colors">
+        <button onClick={() => { logout(); navigate('/'); }} className="flex items-center gap-3 px-3 py-2.5 w-full rounded-md text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50 hover:text-red-600 transition-colors">
           <LogOut size={20} />
           Logout
         </button>

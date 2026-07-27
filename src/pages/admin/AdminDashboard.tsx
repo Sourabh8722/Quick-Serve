@@ -1,7 +1,6 @@
-import React from 'react';
 import { StatCard } from '../../components/ui/StatCard';
-import { DollarSign, Calendar, Users, Star, Download, Plus } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { DollarSign, Calendar, Users, Star, Download, Plus, Settings } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const chartData = [
   { name: 'WK 1', bookings: 400 },

@@ -1,12 +1,21 @@
-import { Calendar, Package, Clock, MapPin, User, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Dashboard() {
+  const { user } = useAuth();
+
+  const recentBookings = [
+    { id: '9823', name: 'Leaking Faucet Repair', date: 'Sep 15, 2023', status: 'Completed', color: 'bg-green-100 text-green-700' },
+    { id: '8742', name: 'AC Maintenance', date: 'Aug 02, 2023', status: 'Completed', color: 'bg-green-100 text-green-700' },
+    { id: '8123', name: 'Sofa Cleaning', date: 'Jul 10, 2023', status: 'Cancelled', color: 'bg-red-100 text-red-700' },
+  ];
+
   return (
     <div className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8">
       
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[var(--color-primary-800)] mb-1">Welcome back, User!</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-primary-800)] mb-1">Welcome back, {user?.name.split(' ')[0] ?? 'Customer'}!</h1>
         <p className="text-[var(--color-text-muted)]">Manage your bookings, addresses, and profile here.</p>
       </div>
 
@@ -17,11 +26,11 @@ export default function Dashboard() {
           <div className="bg-white rounded-2xl border border-[var(--color-border-main)] p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold text-2xl">
-                U
+                {user?.name.charAt(0).toUpperCase() ?? 'U'}
               </div>
               <div>
-                <h3 className="font-bold text-lg text-[var(--color-text-main)]">User Name</h3>
-                <p className="text-sm text-[var(--color-text-muted)]">user@example.com</p>
+                <h3 className="font-bold text-lg text-[var(--color-text-main)]">{user?.name ?? 'Customer'}</h3>
+                <p className="text-sm text-[var(--color-text-muted)]">{user?.email ?? 'No email available'}</p>
               </div>
             </div>
             
@@ -86,11 +95,7 @@ export default function Dashboard() {
           <div>
             <h2 className="text-xl font-bold text-[var(--color-text-main)] mb-4">Recent Bookings</h2>
             <div className="bg-white rounded-2xl border border-[var(--color-border-main)] divide-y divide-[var(--color-border-main)]">
-              {[
-                { id: '9823', name: 'Leaking Faucet Repair', date: 'Sep 15, 2023', status: 'Completed', color: 'bg-green-100 text-green-700' },
-                { id: '8742', name: 'AC Maintenance', date: 'Aug 02, 2023', status: 'Completed', color: 'bg-green-100 text-green-700' },
-                { id: '8123', name: 'Sofa Cleaning', date: 'Jul 10, 2023', status: 'Cancelled', color: 'bg-red-100 text-red-700' },
-              ].map(booking => (
+              {recentBookings.map(booking => (
                 <div key={booking.id} className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
                     <div className="flex items-center gap-3 mb-1">

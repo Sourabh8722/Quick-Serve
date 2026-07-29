@@ -29,6 +29,15 @@ import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
 import ProviderDashboard from './pages/provider/ProviderDashboard';
 import ProviderProfile from './pages/provider/ProviderProfile';
+import BookingsPage from './pages/provider/BookingsPage';
+import CustomersPage from './pages/provider/CustomersPage';
+import CustomerDetailsPage from './pages/provider/CustomerDetailsPage';
+import ServicesPage from './pages/provider/ServicesPage';
+import EarningsPage from './pages/provider/EarningsPage';
+import ReviewsPage from './pages/provider/ReviewsPage';
+import AvailabilityPage from './pages/provider/AvailabilityPage';
+import NotificationsPage from './pages/provider/NotificationsPage';
+import SettingsPage from './pages/provider/SettingsPage';
 
 const queryClient = new QueryClient();
 
@@ -55,7 +64,17 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Provider Routes */}
+          <Route path="/provider" element={<ProviderRoute><ProviderDashboard /></ProviderRoute>} />
           <Route path="/provider/dashboard" element={<ProviderRoute><ProviderDashboard /></ProviderRoute>} />
+          <Route path="/provider/bookings" element={<ProviderRoute><BookingsPage /></ProviderRoute>} />
+          <Route path="/provider/customers" element={<ProviderRoute><CustomersPage /></ProviderRoute>} />
+          <Route path="/provider/customers/:id" element={<ProviderRoute><CustomerDetailsPage /></ProviderRoute>} />
+          <Route path="/provider/services" element={<ProviderRoute><ServicesPage /></ProviderRoute>} />
+          <Route path="/provider/earnings" element={<ProviderRoute><EarningsPage /></ProviderRoute>} />
+          <Route path="/provider/reviews" element={<ProviderRoute><ReviewsPage /></ProviderRoute>} />
+          <Route path="/provider/availability" element={<ProviderRoute><AvailabilityPage /></ProviderRoute>} />
+          <Route path="/provider/notifications" element={<ProviderRoute><NotificationsPage /></ProviderRoute>} />
+          <Route path="/provider/settings" element={<ProviderRoute><SettingsPage /></ProviderRoute>} />
           <Route path="/provider/profile" element={<ProviderRoute><ProviderProfile /></ProviderRoute>} />
 
           {/* Admin Routes */}

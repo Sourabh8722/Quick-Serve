@@ -1,107 +1,72 @@
-import { useAuth } from '../../context/AuthContext';
-import { Link } from 'react-router-dom';
-import { CheckCircle2, ArrowLeft } from 'lucide-react';
+import ProviderShell from '../../components/provider/ProviderShell';
+import { Camera, Mail, Phone, MapPin, BriefcaseBusiness, BadgeCheck } from 'lucide-react';
 
 export default function ProviderProfile() {
-  const { user, logout } = useAuth();
-
-  if (!user) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold text-[var(--color-primary-800)]">Not signed in</h2>
-        <p className="text-[var(--color-text-muted)] mt-2">Please sign in to view your provider profile.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Provider Profile</h1>
-          <p className="text-[var(--color-text-muted)]">Manage your account, service listing details, and provider status.</p>
-        </div>
-        <Link
-          to="/provider/dashboard"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-primary-600)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--color-primary-800)] transition-colors"
-        >
-          <ArrowLeft size={18} />
-          Back to dashboard
-        </Link>
-      </div>
+    <ProviderShell active="profile">
+      <div className="space-y-6">
+        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Business Profile</p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-900">Provider Profile</h2>
+              <p className="mt-2 text-sm text-slate-500">Present a polished, trustworthy business profile to every customer.</p>
+            </div>
+            <button className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white">Save Profile</button>
+          </div>
 
-      <div className="bg-white border border-[var(--color-border-main)] rounded-3xl p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="rounded-2xl bg-slate-50 p-6">
-            <h2 className="font-semibold text-lg text-[var(--color-text-main)] mb-4">Account Summary</h2>
-            <div className="space-y-4 text-sm text-[var(--color-text-muted)]">
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Name</span>
-                <span>{user.name}</span>
+          <div className="mt-6 grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-center">
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[1.5rem] bg-sky-500/10 text-sky-600">
+                <Camera size={24} />
               </div>
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Email</span>
-                <span>{user.email}</span>
+              <p className="mt-4 font-semibold text-slate-900">Maya Chen</p>
+              <p className="mt-2 text-sm text-slate-500">Trusted local service provider</p>
+              <div className="mt-4 flex justify-center gap-2">
+                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-600">Verified</span>
+                <span className="rounded-full bg-violet-500/10 px-3 py-1 text-sm font-semibold text-violet-600">8 years</span>
               </div>
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Role</span>
-                <span>{user.role}</span>
+            </div>
+
+            <div className="space-y-4 rounded-[1.5rem] border border-slate-200 bg-white p-5">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Business Name</p>
+                  <p className="mt-2 text-sm text-slate-600">Maya Chen Home Services</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Owner Name</p>
+                  <p className="mt-2 text-sm text-slate-600">Maya Chen</p>
+                </div>
               </div>
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Joined</span>
-                <span>{new Date(user.joinedAt).toLocaleDateString()}</span>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Phone</p>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-slate-600"><Phone size={14} /> (555) 204-1183</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Email</p>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-slate-600"><Mail size={14} /> maya@quickserve.com</p>
+                </div>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="text-sm font-semibold text-slate-900">Address</p>
+                <p className="mt-2 flex items-center gap-2 text-sm text-slate-600"><MapPin size={14} /> 452 River Street, Brooklyn, NY</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Experience</p>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-slate-600"><BadgeCheck size={14} className="text-emerald-500" /> 8 years</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Skills</p>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-slate-600"><BriefcaseBusiness size={14} /> HVAC, Plumbing, Electrical</p>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="rounded-2xl bg-white p-6 border border-[var(--color-border-main)]">
-            <h2 className="font-semibold text-lg text-[var(--color-text-main)] mb-4">Provider details</h2>
-            <div className="space-y-4 text-sm text-[var(--color-text-muted)]">
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Business name</span>
-                <span>{user.businessName || 'Not provided'}</span>
-              </div>
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Service category</span>
-                <span>{user.profession || 'Not provided'}</span>
-              </div>
-              <div>
-                <span className="block font-medium text-[var(--color-text-main)]">Provider status</span>
-                <span>{user.providerStatus ?? 'N/A'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-[var(--color-border-main)] bg-[#f8fafc] p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-[var(--color-text-main)]">Approval status</h2>
-            <p className="text-sm text-[var(--color-text-muted)]">
-              {user.providerStatus === 'APPROVED'
-                ? 'Your account is approved. You can manage requests and accept bookings.'
-                : user.providerStatus === 'PENDING'
-                ? 'Your application is pending. You will receive approval soon.'
-                : 'Your application was rejected. Contact support to reapply.'}
-            </p>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[var(--color-primary-600)]">
-            <CheckCircle2 size={18} />
-            {user.providerStatus ?? 'Pending'}
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-3xl border border-[var(--color-border-main)] bg-white p-6">
-          <h2 className="font-semibold text-lg text-[var(--color-text-main)] mb-4">Profile actions</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <button onClick={logout} className="rounded-2xl bg-[var(--color-primary-600)] px-4 py-3 text-sm font-semibold text-white hover:bg-[var(--color-primary-800)] transition-colors">
-              Sign out
-            </button>
-            <Link to="/provider/dashboard" className="inline-flex items-center justify-center rounded-2xl border border-[var(--color-border-main)] px-4 py-3 text-sm font-semibold text-[var(--color-text-main)] hover:bg-gray-50 transition-colors">
-              View dashboard
-            </Link>
-          </div>
         </div>
       </div>
-    </div>
+    </ProviderShell>
   );
 }

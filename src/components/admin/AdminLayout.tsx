@@ -7,8 +7,7 @@ import {
   BarChart3, 
   Settings,
   LogOut,
-  Bell,
-  Search
+  Bell
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -73,16 +72,7 @@ const AdminSidebar = () => {
 const AdminHeader = () => {
   return (
     <header className="h-16 bg-white border-b border-[var(--color-border-main)] flex items-center justify-between px-8 sticky top-0 z-40">
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
-          <input 
-            type="text" 
-            placeholder="Search bookings, users, providers..." 
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-[var(--color-border-main)] rounded-full text-sm outline-none focus:border-[var(--color-primary-600)]"
-          />
-        </div>
-      </div>
+      <div className="flex-1" />
 
       <div className="flex items-center gap-4">
         <button className="relative p-2 text-[var(--color-text-muted)] hover:text-[var(--color-primary-600)] transition-colors">

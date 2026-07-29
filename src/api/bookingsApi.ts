@@ -12,6 +12,9 @@ export type Booking = {
   date: string;
   time: string;
   address: string;
+  city: string;
+  problemDescription: string;
+  attachments: Array<{ name: string; type: string; size: number }>;
   paymentMethod: string;
   price: number;
   total: number;

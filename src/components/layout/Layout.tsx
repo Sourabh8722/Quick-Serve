@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom';
-import { Search, MapPin, User, Menu, LogIn, LogOut } from 'lucide-react';
+import { User, Menu, LogIn, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const AuthNav = () => {
@@ -38,22 +38,6 @@ const Navbar = () => {
           <div className="w-8 h-8 bg-[var(--color-primary-600)] text-white rounded-md flex items-center justify-center font-bold text-xl">Q</div>
           <span className="font-bold text-xl text-[var(--color-primary-800)]">QuickServe</span>
         </Link>
-
-        {/* Location & Search (Desktop) */}
-        <div className="hidden md:flex flex-1 max-w-2xl mx-8 items-center bg-[var(--color-background)] rounded-full border border-[var(--color-border-main)] px-2 py-1">
-          <div className="flex items-center gap-1 px-3 border-r border-[var(--color-border-main)] text-sm font-medium text-[var(--color-text-muted)] min-w-[120px]">
-            <MapPin size={16} />
-            <span>Pune</span>
-          </div>
-          <div className="flex-1 flex items-center px-3">
-            <Search size={16} className="text-[var(--color-text-muted)]" />
-            <input 
-              type="text" 
-              placeholder="Search electrician, plumber, AC repair..." 
-              className="w-full bg-transparent border-none outline-none px-2 text-sm text-[var(--color-text-main)] placeholder-[var(--color-text-muted)]"
-            />
-          </div>
-        </div>
 
         {/* Right Nav */}
         <div className="flex items-center gap-4">

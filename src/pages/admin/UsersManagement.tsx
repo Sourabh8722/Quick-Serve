@@ -1,5 +1,3 @@
-import { useMemo, useState } from 'react';
-
 const mockUsers = [
   { id: 1, name: 'Customer User', email: 'user@quickserve.com', status: 'Active' },
   { id: 2, name: 'Admin User', email: 'admin@quickserve.com', status: 'Active' },
@@ -7,12 +5,6 @@ const mockUsers = [
 ];
 
 export default function UsersManagement() {
-  const [search, setSearch] = useState('');
-  const filtered = useMemo(
-    () => mockUsers.filter(user => user.name.toLowerCase().includes(search.toLowerCase()) || user.email.toLowerCase().includes(search.toLowerCase())),
-    [search],
-  );
-
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -20,13 +12,6 @@ export default function UsersManagement() {
           <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Users</h1>
           <p className="text-[var(--color-text-muted)]">Manage customer accounts and activity.</p>
         </div>
-
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search users..."
-          className="border border-[var(--color-border-main)] rounded-2xl px-4 py-3 text-sm outline-none"
-        />
       </div>
 
       <div className="bg-white border border-[var(--color-border-main)] rounded-3xl overflow-hidden">
@@ -40,7 +25,7 @@ export default function UsersManagement() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((user) => (
+            {mockUsers.map((user) => (
               <tr key={user.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{user.name}</td>
                 <td className="px-6 py-4">{user.email}</td>

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserPlus, Mail, Lock, Briefcase, Home, ShieldCheck } from 'lucide-react';
+import { UserPlus, Mail, Lock, Briefcase, Home, ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
+
+const DEMO_OTP = '123456';
 
 const roleOptions = [
   {
@@ -29,7 +31,12 @@ export default function AuthRegister() {
   const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [mobileVerified, setMobileVerified] = useState(false);
+  const [otpMessage, setOtpMessage] = useState('');
   const [role, setRole] = useState<typeof roleOptions[number]['value']>('CUSTOMER');
   const [profession, setProfession] = useState('');
   const [businessName, setBusinessName] = useState('');
@@ -37,12 +44,51 @@ export default function AuthRegister() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const normalizedMobileNumber = mobileNumber.replace(/\s|-/g, '');
+
+  function handleMobileNumberChange(value: string) {
+    setMobileNumber(value);
+    setOtp('');
+    setOtpSent(false);
+    setMobileVerified(false);
+    setOtpMessage('');
+  }
+
+  function sendOtp() {
+    if (!/^\+?[1-9]\d{7,14}$/.test(normalizedMobileNumber)) {
+      setError('Enter a valid mobile number, including the country code if needed.');
+      return;
+    }
+
+    setError('');
+    setOtpSent(true);
+    setMobileVerified(false);
+    setOtp('');
+    setOtpMessage(`OTP sent to ${mobileNumber}. Demo code: ${DEMO_OTP}`);
+  }
+
+  function verifyOtp() {
+    if (otp !== DEMO_OTP) {
+      setMobileVerified(false);
+      setOtpMessage('That OTP is not correct. Please try again.');
+      return;
+    }
+
+    setMobileVerified(true);
+    setOtpMessage('Mobile number verified successfully.');
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
 
-    if (!name.trim() || !email.trim() || !password.trim()) {
+    if (!name.trim() || !email.trim() || !mobileNumber.trim() || !password.trim()) {
       setError('Please fill out all required fields.');
+      return;
+    }
+
+    if (!mobileVerified) {
+      setError('Please verify your mobile number with an OTP to continue.');
       return;
     }
 
@@ -61,6 +107,7 @@ export default function AuthRegister() {
       await register({
         name: name.trim(),
         email: email.trim(),
+        mobileNumber: normalizedMobileNumber,
         password,
         role,
         profession: profession.trim() || undefined,
@@ -167,6 +214,59 @@ export default function AuthRegister() {
                 className="w-full border-none outline-none text-sm text-[var(--color-text-main)]"
               />
             </div>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-semibold text-[var(--color-text-main)] mb-2">Mobile number</label>
+              <div className="flex items-center gap-2 border border-[var(--color-border-main)] rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-[var(--color-primary-600)]">
+                <Phone size={18} className="text-[var(--color-text-muted)]" />
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  value={mobileNumber}
+                  onChange={(e) => handleMobileNumberChange(e.target.value)}
+                  placeholder="e.g. +91 98765 43210"
+                  className="w-full border-none outline-none text-sm text-[var(--color-text-main)]"
+                  aria-describedby="mobile-help"
+                />
+                <button
+                  type="button"
+                  onClick={sendOtp}
+                  disabled={mobileVerified}
+                  className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${mobileVerified ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-800)]'}`}
+                >
+                  {mobileVerified ? 'Verified' : otpSent ? 'Resend OTP' : 'Send OTP'}
+                </button>
+              </div>
+              <p id="mobile-help" className="mt-2 text-xs text-[var(--color-text-muted)]">We’ll use this number to verify your account.</p>
+            </div>
+
+            {otpSent && !mobileVerified && (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Enter 6-digit OTP"
+                  className="min-w-0 flex-1 border border-[var(--color-border-main)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-main)] outline-none focus:ring-2 focus:ring-[var(--color-primary-600)]"
+                />
+                <button type="button" onClick={verifyOtp} className="rounded-xl bg-[var(--color-primary-50)] px-4 py-3 text-sm font-semibold text-[var(--color-primary-800)] hover:bg-[var(--color-primary-100)]">
+                  Verify
+                </button>
+              </div>
+            )}
+
+            {otpMessage && (
+              <p className={`flex items-center gap-2 text-sm ${mobileVerified ? 'text-emerald-700' : 'text-[var(--color-text-muted)]'}`}>
+                {mobileVerified && <CheckCircle2 size={16} />}
+                {otpMessage}
+              </p>
+            )}
           </div>
 
           {role === 'SERVICE_PROVIDER' && (

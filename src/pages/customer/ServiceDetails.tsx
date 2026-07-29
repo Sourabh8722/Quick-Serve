@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 import servicesData from '../../data/services';
 import type { Review } from '../../data/reviews';
 import { useReviews } from '../../hooks/useReviews';
@@ -30,8 +30,13 @@ export default function ServiceDetails() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
+      <Link to="/services" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary-600)] hover:underline">
+        <ArrowLeft size={18} /> Back to services
+      </Link>
       <div className="bg-white border border-[var(--color-border-main)] rounded-2xl overflow-hidden">
-        <div className="h-56 bg-gray-100 flex items-center justify-center text-gray-400">Image</div>
+        <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden text-gray-400">
+          {service.imageUrl ? <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover" /> : 'Image'}
+        </div>
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>

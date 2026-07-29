@@ -7,6 +7,7 @@ export type AuthUser = {
   id: string;
   name: string;
   email: string;
+  mobileNumber?: string;
   role: UserRole;
   joinedAt: string;
   providerStatus?: ProviderStatus;
@@ -17,6 +18,7 @@ export type AuthUser = {
 type RegisterPayload = {
   name: string;
   email: string;
+  mobileNumber: string;
   password: string;
   role: UserRole;
   profession?: string;
@@ -128,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await new Promise(resolve => setTimeout(resolve, 250));
 
     const normalizedEmail = payload.email.trim().toLowerCase();
-    if (!payload.name.trim() || !normalizedEmail || !payload.password.trim() || !payload.role) {
+    if (!payload.name.trim() || !normalizedEmail || !payload.mobileNumber.trim() || !payload.password.trim() || !payload.role) {
       return Promise.reject(new Error('Please fill out all required fields.'));
     }
 
@@ -146,6 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: `user-${Date.now()}`,
       name: payload.name.trim(),
       email: normalizedEmail,
+      mobileNumber: payload.mobileNumber.trim(),
       role: payload.role,
       joinedAt: new Date().toISOString(),
       profession: payload.profession?.trim() || undefined,

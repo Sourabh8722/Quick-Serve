@@ -1,4 +1,4 @@
-import { Search, ShieldCheck, Clock, Star, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Clock, Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const categories = [
@@ -24,19 +24,9 @@ export default function Home() {
             Book trusted, verified professionals for all your home needs. From plumbing to painting, we've got you covered.
           </p>
           
-          <div className="bg-white p-2 rounded-full flex items-center shadow-lg max-w-2xl mx-auto">
-            <div className="pl-6 text-[var(--color-text-muted)]">
-              <Search size={20} />
-            </div>
-            <input 
-              type="text" 
-              placeholder="What service do you need?" 
-              className="flex-1 px-4 py-3 outline-none text-[var(--color-text-main)] text-lg placeholder-[var(--color-text-muted)]"
-            />
-            <button className="bg-[var(--color-primary-600)] text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors">
-              Search
-            </button>
-          </div>
+          <Link to="/services" className="inline-flex items-center rounded-full bg-white px-8 py-4 font-semibold text-[var(--color-primary-800)] shadow-lg transition hover:bg-blue-50">
+            Browse services <ArrowRight size={18} className="ml-2" />
+          </Link>
         </div>
       </section>
 

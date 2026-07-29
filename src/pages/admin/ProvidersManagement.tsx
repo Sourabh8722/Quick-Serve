@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import type { AuthUser } from '../../context/AuthContext';
 
@@ -11,7 +11,6 @@ const statusStyles = {
 export default function ProvidersManagement() {
   const { fetchUsers, updateUser } = useAuth();
   const [providers, setProviders] = useState<AuthUser[]>([]);
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,15 +24,6 @@ export default function ProvidersManagement() {
     load();
   }, [fetchUsers]);
 
-  const filtered = useMemo(
-    () => providers.filter((provider) =>
-      provider.name.toLowerCase().includes(search.toLowerCase()) ||
-      (provider.profession ?? '').toLowerCase().includes(search.toLowerCase()) ||
-      (provider.businessName ?? '').toLowerCase().includes(search.toLowerCase()),
-    ),
-    [providers, search],
-  );
-
   const handleApproval = async (provider: AuthUser, approve: boolean) => {
     const updated = await updateUser(provider.id, { providerStatus: approve ? 'APPROVED' : 'REJECTED' });
     setProviders((current) => current.map((item) => (item.id === provider.id && updated ? updated : item)));
@@ -46,13 +36,6 @@ export default function ProvidersManagement() {
           <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Providers</h1>
           <p className="text-[var(--color-text-muted)]">Manage service providers and approvals.</p>
         </div>
-
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search providers..."
-          className="border border-[var(--color-border-main)] rounded-2xl px-4 py-3 text-sm outline-none"
-        />
       </div>
 
       <div className="bg-white border border-[var(--color-border-main)] rounded-3xl overflow-hidden">
@@ -71,12 +54,12 @@ export default function ProvidersManagement() {
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">Loading providers…</td>
               </tr>
-            ) : filtered.length === 0 ? (
+            ) : providers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">No providers found.</td>
               </tr>
             ) : (
-              filtered.map((provider) => (
+              providers.map((provider) => (
                 <tr key={provider.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{provider.name}</td>
                   <td className="px-6 py-4">{provider.businessName ?? '—'}</td>

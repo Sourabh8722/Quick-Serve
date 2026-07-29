@@ -209,7 +209,11 @@ export default function Services() {
               {filtered.map((service: Service) => (
                 <div key={service.id} className="bg-white border border-[var(--color-border-main)] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
                   <div className="h-40 bg-gray-100 relative">
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">Image</div>
+                    {service.imageUrl ? (
+                      <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400">Image</div>
+                    )}
                     <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded-md text-xs font-bold text-[var(--color-primary-800)] shadow-sm">{service.category}</div>
                   </div>
 

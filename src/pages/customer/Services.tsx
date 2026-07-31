@@ -46,8 +46,7 @@ export default function Services() {
     if (term) {
       list = list.filter(s =>
         s.name.toLowerCase().includes(term) ||
-        s.category.toLowerCase().includes(term) ||
-        s.provider.toLowerCase().includes(term)
+        s.category.toLowerCase().includes(term)
       );
     }
 
@@ -224,10 +223,7 @@ export default function Services() {
                       </h3>
                     </div>
 
-                    <div className="flex items-center gap-1 text-sm text-[var(--color-text-muted)] mb-4">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] ${service.image}`}>{service.provider.charAt(0)}</div>
-                      <span>{service.provider}</span>
-                    </div>
+
 
                     <div className="flex items-center gap-4 text-sm mb-4">
                       <div className="flex items-center gap-1 text-[var(--color-text-main)] font-semibold">

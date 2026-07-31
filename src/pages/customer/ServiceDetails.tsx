@@ -41,7 +41,7 @@ export default function ServiceDetails() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-text-main)]">{service.name}</h1>
-              <div className="text-sm text-[var(--color-text-muted)]">{service.category} • by {service.provider}</div>
+              <div className="text-sm text-[var(--color-text-muted)]">{service.category}</div>
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end gap-2">
@@ -60,15 +60,23 @@ export default function ServiceDetails() {
 
               <h4 className="font-semibold mb-2">What's included</h4>
               <ul className="list-disc pl-5 text-[var(--color-text-muted)] mb-4">
-                <li>Skilled technician</li>
-                <li>Tools and basic supplies</li>
-                <li>Quality check after service</li>
+                {service.includes ? service.includes.map((item, idx) => <li key={idx}>{item}</li>) : (
+                  <>
+                    <li>Skilled technician</li>
+                    <li>Tools and basic supplies</li>
+                    <li>Quality check after service</li>
+                  </>
+                )}
               </ul>
 
               <h4 className="font-semibold mb-2">What's not included</h4>
               <ul className="list-disc pl-5 text-[var(--color-text-muted)] mb-4">
-                <li>Major spare parts</li>
-                <li>Out-of-scope repairs</li>
+                {service.excludes ? service.excludes.map((item, idx) => <li key={idx}>{item}</li>) : (
+                  <>
+                    <li>Major spare parts</li>
+                    <li>Out-of-scope repairs</li>
+                  </>
+                )}
               </ul>
 
               <h4 className="font-semibold mb-2">Frequently asked questions</h4>

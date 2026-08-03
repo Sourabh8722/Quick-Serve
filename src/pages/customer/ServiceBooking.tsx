@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import servicesData from '../../data/services';
 import providersData from '../../data/providers';
 import type { Provider } from '../../data/providers';
 import { useAuth } from '../../context/AuthContext';
 import bookingsApi from '../../api/bookingsApi';
-import { Calendar as CalendarIcon, Clock, MapPin, CreditCard, CheckCircle2, ChevronRight, ChevronLeft, Wrench, FileUp, X, Star, User } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, MapPin, CreditCard, CheckCircle2, ChevronRight, ChevronLeft, Wrench, FileUp, X, Star, User, Zap } from 'lucide-react';
 
 const timeSlots = ['09:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
 const cities = ['Mumbai', 'Pune', 'Bengaluru', 'Hyderabad', 'Delhi'];
@@ -14,18 +14,58 @@ export default function ServiceBooking() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [step, setStep] = useState(1);
+  const [searchParams] = useSearchParams();
+  const fastTrack = searchParams.get('fastTrack') === 'true';
+
+  const [dateType, setDateType] = useState<'now'|'today'|'tomorrow'|'custom'>(fastTrack ? 'now' : 'custom');
+  const [step, setStep] = useState(fastTrack ? 3 : 1);
   const [selectedServiceId, setSelectedServiceId] = useState(Number(id));
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [date, setDate] = useState(() => {
+    if (fastTrack) return new Date().toISOString().split('T')[0];
+    return '';
+  });
+  const [time, setTime] = useState(fastTrack ? timeSlots[0] : '');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('Pune');
   const [problemDescription, setProblemDescription] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [availableProviders, setAvailableProviders] = useState<Provider[]>([]);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function checkProviders() {
+      if ((step === 4 || fastTrack) && date && time) {
+        setCheckingAvailability(true);
+        try {
+          const booked = await bookingsApi.fetchBookingsByDateAndTime(date, time);
+          const bookedProviderNames = booked.map(b => b.providerName || b.provider);
+          
+          let filtered = providersData.filter(p => p.location === city && p.availability.includes(time) && !bookedProviderNames.includes(p.name));
+          
+          // Scoring algorithm
+          filtered = filtered.sort((a, b) => {
+             const scoreA = (a.rating * 20) + (a.experience * 2) + (a.completionRate * 0.5) - (a.distance * 2) - (a.priceMultiplier * 10);
+             const scoreB = (b.rating * 20) + (b.experience * 2) + (b.completionRate * 0.5) - (b.distance * 2) - (b.priceMultiplier * 10);
+             return scoreB - scoreA;
+          });
+
+          setAvailableProviders(filtered);
+          if (filtered.length > 0 && !selectedProvider) {
+            setSelectedProvider(filtered[0]);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setCheckingAvailability(false);
+        }
+      }
+    }
+    checkProviders();
+  }, [step, date, time, city, fastTrack, dateType]);
 
   // Lookup service data based on ID
   const serviceId = selectedServiceId;
@@ -146,14 +186,39 @@ export default function ServiceBooking() {
               </h2>
               
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-[var(--color-text-main)] mb-2">Service Date</label>
-                <input 
-                  type="date" 
-                  value={date} 
-                  onChange={e => setDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full p-3 border border-[var(--color-border-main)] rounded-xl outline-none focus:border-[var(--color-primary-600)]"
-                />
+                <label className="block text-sm font-semibold text-[var(--color-text-main)] mb-3">When do you need the service?</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  {(['now', 'today', 'tomorrow', 'custom'] as const).map(type => (
+                    <button
+                      key={type}
+                      onClick={() => {
+                        setDateType(type);
+                        if (type === 'today' || type === 'now') setDate(new Date().toISOString().split('T')[0]);
+                        if (type === 'tomorrow') {
+                          const tmrw = new Date();
+                          tmrw.setDate(tmrw.getDate() + 1);
+                          setDate(tmrw.toISOString().split('T')[0]);
+                        }
+                      }}
+                      className={`p-3 rounded-xl border text-sm font-semibold transition-all capitalize flex items-center justify-center ${
+                        dateType === type ? 'border-[var(--color-primary-600)] bg-blue-50 text-[var(--color-primary-800)]' : 'border-[var(--color-border-main)] text-[var(--color-text-muted)] hover:border-gray-400'
+                      }`}
+                    >
+                      {type === 'now' && <Zap size={16} className="mr-1 text-orange-500" />}
+                      {type}
+                    </button>
+                  ))}
+                </div>
+
+                {dateType === 'custom' && (
+                  <input 
+                    type="date" 
+                    value={date} 
+                    onChange={e => setDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full p-3 border border-[var(--color-border-main)] rounded-xl outline-none focus:border-[var(--color-primary-600)] mt-2"
+                  />
+                )}
               </div>
 
               <div>
@@ -244,32 +309,49 @@ export default function ServiceBooking() {
               </h2>
               <p className="text-sm text-[var(--color-text-muted)] mb-4">Choose a professional available in your area for the selected time slot.</p>
               <div className="space-y-4">
-                {providersData.slice(0, 4).map((provider) => (
-                  <label key={provider.id} className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all ${
-                    selectedProvider?.id === provider.id ? 'border-[var(--color-primary-600)] bg-blue-50 ring-1 ring-[var(--color-primary-600)]' : 'border-[var(--color-border-main)] hover:bg-gray-50'
-                  }`}>
-                    <input 
-                      type="radio" 
-                      name="provider" 
-                      value={provider.id} 
-                      checked={selectedProvider?.id === provider.id}
-                      onChange={() => setSelectedProvider(provider)}
-                      className="mt-2 accent-[var(--color-primary-600)] w-4 h-4" 
-                    />
-                    <div className={`w-10 h-10 rounded-full flex shrink-0 items-center justify-center font-bold text-sm ${provider.avatarColor}`}>
-                      {provider.name.charAt(0)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-lg text-[var(--color-text-main)]">{provider.name}</span>
-                        <div className="flex items-center gap-1 text-sm font-bold text-yellow-600">
-                          <Star size={14} className="fill-yellow-500 text-yellow-500" /> {provider.rating}
-                        </div>
+                {checkingAvailability ? (
+                  <div className="text-sm text-gray-500 py-4">Finding the best available professionals...</div>
+                ) : availableProviders.length === 0 ? (
+                  <div className="text-sm text-rose-500 py-4">No providers available for the selected time and location. Please choose another time.</div>
+                ) : (
+                  availableProviders.slice(0, 4).map((provider, idx) => (
+                    <label key={provider.id} className={`flex items-start gap-4 p-4 border rounded-xl cursor-pointer transition-all ${
+                      selectedProvider?.id === provider.id ? 'border-[var(--color-primary-600)] bg-blue-50 ring-1 ring-[var(--color-primary-600)]' : 'border-[var(--color-border-main)] hover:bg-gray-50'
+                    }`}>
+                      <input 
+                        type="radio" 
+                        name="provider" 
+                        value={provider.id} 
+                        checked={selectedProvider?.id === provider.id}
+                        onChange={() => setSelectedProvider(provider)}
+                        className="mt-2 accent-[var(--color-primary-600)] w-4 h-4" 
+                      />
+                      <div className={`w-10 h-10 rounded-full flex shrink-0 items-center justify-center font-bold text-sm ${provider.avatarColor}`}>
+                        {provider.name.charAt(0)}
                       </div>
-                      <div className="text-sm text-[var(--color-text-muted)]">{provider.experience} yrs experience • {provider.jobsCompleted} jobs completed</div>
-                    </div>
-                  </label>
-                ))}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <div>
+                            <span className="font-bold text-lg text-[var(--color-text-main)] flex items-center gap-2">
+                              {provider.name}
+                              {idx === 0 && <span className="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full flex items-center gap-1"><Zap size={12}/> Best Match</span>}
+                            </span>
+                            <div className="text-xs text-gray-500 mt-0.5">{provider.distance} km away • {provider.completionRate}% completion rate</div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-1 text-sm font-bold text-yellow-600">
+                              <Star size={14} className="fill-yellow-500 text-yellow-500" /> {provider.rating}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {provider.priceMultiplier > 1 ? 'Higher Demand' : provider.priceMultiplier < 1 ? 'Discounted' : 'Standard Rate'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-sm text-[var(--color-text-muted)] mt-2">{provider.experience} yrs experience • {provider.jobsCompleted} jobs completed</div>
+                      </div>
+                    </label>
+                  ))
+                )}
               </div>
             </div>
           )}

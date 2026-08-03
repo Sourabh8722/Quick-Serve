@@ -5,10 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import bookingsApi, { type Booking } from '../../api/bookingsApi';
 
 const statusLabel = (status: Booking['status']) => {
-  if (status === 'Pending') return 'Pending';
-  if (status === 'Confirmed') return 'Confirmed';
-  if (status === 'In Progress') return 'In Progress';
-  if (status === 'Completed') return 'Completed';
   return status;
 };
 
@@ -37,7 +33,7 @@ export default function ProviderDashboard() {
   const handleRequestAction = async (bookingId: string, approve: boolean) => {
     if (!user) return;
     const updates = approve
-      ? { status: 'Confirmed' as const, providerEmail: user.email, providerName }
+      ? { status: 'Booking Confirmed' as const, providerEmail: user.email, providerName }
       : { status: 'Cancelled' as const };
     await bookingsApi.updateBooking(bookingId, updates);
     fetchBookings();

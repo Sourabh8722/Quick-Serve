@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Search, Filter, Star } from 'lucide-react';
+import { Search, Filter, Star, Lightbulb } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import servicesData, { serviceCategories } from '../../data/services';
 import type { Service } from '../../data/services';
@@ -7,6 +7,45 @@ import { useAuth } from '../../context/AuthContext';
 
 type SortOption = 'recommended' | 'price-asc' | 'price-desc' | 'rating-desc' | 'popular';
 
+const categoryKeywords: Record<string, string[]> = {
+  'Cleaning': ['clean', 'dust', 'mess', 'dirty', 'wash', 'stain', 'spill', 'sweep', 'mop', 'garbage', 'trash', 'spot'],
+  'Plumber': ['leak', 'pipe', 'water', 'drip', 'tap', 'faucet', 'sink', 'toilet', 'flush', 'drain', 'clog', 'block', 'plumbing'],
+  'Electrician': ['spark', 'power', 'light', 'wire', 'short circuit', 'switch', 'current', 'shock', 'fuse', 'plug', 'electricity', 'electric'],
+  'Painting': ['paint', 'color', 'wall', 'peeling', 'brush', 'coat', 'repaint'],
+  'AC Repair': ['ac', 'air condition', 'cooling', 'cool', 'not working', 'hot air', 'gas', 'hvac'],
+  'Appliance Repair': ['fridge', 'refrigerator', 'washing machine', 'microwave', 'oven', 'tv', 'machine', 'appliance', 'broken', 'repair'],
+  'Carpentry': ['wood', 'furniture', 'door', 'window', 'table', 'chair', 'creak', 'hinge', 'cabinet', 'carpenter', 'fix'],
+  'Beauty': ['hair', 'makeup', 'massage', 'facial', 'pedicure', 'manicure', 'waxing', 'salon', 'parlor', 'grooming', 'beauty', 'skin', 'face'],
+};
+
+function suggestCategory(query: string): string | null {
+  const words = query.toLowerCase().match(/\b\w+\b/g) || [];
+  if (words.length === 0) return null;
+
+  let bestCategory = null;
+  let maxMatches = 0;
+
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    let matches = 0;
+    for (const word of words) {
+      if (keywords.includes(word)) {
+        matches++;
+      }
+    }
+    for (const keyword of keywords) {
+      if (keyword.includes(' ') && query.toLowerCase().includes(keyword)) {
+        matches += 2;
+      }
+    }
+    
+    if (matches > maxMatches) {
+      maxMatches = matches;
+      bestCategory = category;
+    }
+  }
+
+  return bestCategory;
+}
 export default function Services() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -19,6 +58,8 @@ export default function Services() {
 
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  const suggestedCategory = useMemo(() => suggestCategory(searchTerm), [searchTerm]);
 
   // Keep URL in sync with local state
   useEffect(() => {
@@ -116,6 +157,29 @@ export default function Services() {
           </button>
         </div>
       </div>
+
+      {suggestedCategory && category !== suggestedCategory && (
+        <div className="mb-8 bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-100 p-2 rounded-full">
+              <Lightbulb size={20} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-blue-800 font-medium">Looks like you need help with {suggestedCategory}.</p>
+              <p className="text-xs text-blue-600">We found the best services for your problem.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => {
+              setCategory(suggestedCategory);
+              setSearchTerm('');
+            }}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto text-center"
+          >
+            View {suggestedCategory} Services
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar (desktop) */}

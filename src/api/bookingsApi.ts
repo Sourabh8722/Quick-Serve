@@ -1,4 +1,4 @@
-type BookingStatus = 'Pending' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
+type BookingStatus = 'Pending' | 'Booking Confirmed' | 'Provider Assigned' | 'On the Way' | 'Arrived' | 'Service Started' | 'Completed' | 'Cancelled';
 
 export type Booking = {
   id: string;
@@ -52,7 +52,7 @@ export async function fetchProviderBookings(providerEmail: string): Promise<{ re
   const stored = readStored();
   const requests = stored.filter((booking) => booking.status === 'Pending');
   const jobs = stored.filter(
-    (booking) => booking.providerEmail === providerEmail && ['Confirmed', 'In Progress'].includes(booking.status),
+    (booking) => booking.providerEmail === providerEmail && !['Pending', 'Completed', 'Cancelled'].includes(booking.status),
   );
   return { requests, jobs };
 }
@@ -60,6 +60,12 @@ export async function fetchProviderBookings(providerEmail: string): Promise<{ re
 export async function fetchAllBookings(): Promise<Booking[]> {
   await new Promise((resolve) => setTimeout(resolve, 200));
   return readStored();
+}
+
+export async function fetchBookingsByDateAndTime(date: string, time: string): Promise<Booking[]> {
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  const stored = readStored();
+  return stored.filter((booking) => booking.date === date && booking.time === time && booking.status !== 'Cancelled');
 }
 
 export async function updateBooking(
@@ -97,4 +103,4 @@ export async function getBookingById(id: string): Promise<Booking | undefined> {
   return stored.find((booking) => booking.id === id);
 }
 
-export default { fetchBookings, fetchProviderBookings, fetchAllBookings, createBooking, getBookingById, updateBooking };
+export default { fetchBookings, fetchProviderBookings, fetchAllBookings, createBooking, getBookingById, updateBooking, fetchBookingsByDateAndTime };

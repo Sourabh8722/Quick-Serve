@@ -1,10 +1,54 @@
+HEAD
 import ProviderShell from '../../components/provider/ProviderShell';
 import StatCard from '../../components/provider/StatCard';
 import { overviewStats, completionChartData, revenueChartData, topServices } from '../../data/providerDashboard';
 import { AreaChart, Area, BarChart, Bar, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ArrowUpRight, CircleDollarSign, TrendingUp } from 'lucide-react';
 
+export default function ProviderDashboard()
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Briefcase, Clock, Users, CheckCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import bookingsApi, { type Booking } from '../../api/bookingsApi';
+
+const statusLabel = (status: Booking['status']) => {
+  return status;
+};
+
 export default function ProviderDashboard() {
+  const { user } = useAuth();
+  const [requests, setRequests] = useState<Booking[]>([]);
+  const [jobs, setJobs] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [available, setAvailable] = useState(true);
+
+  const providerName = user?.name ?? '';
+
+  const fetchBookings = async () => {
+    if (!user) return;
+    setLoading(true);
+    const result = await bookingsApi.fetchProviderBookings(user.email);
+    setRequests(result.requests);
+    setJobs(result.jobs);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, [user]);
+
+  const handleRequestAction = async (bookingId: string, approve: boolean) => {
+    if (!user) return;
+    const updates = approve
+      ? { status: 'Booking Confirmed' as const, providerEmail: user.email, providerName }
+      : { status: 'Cancelled' as const };
+    await bookingsApi.updateBooking(bookingId, updates);
+    fetchBookings();
+  };
+
+  const newLeads = useMemo(() => Math.max(0, requests.length - jobs.length), [requests.length, jobs.length]);
+   sourabh-dev
   return (
     <ProviderShell active="dashboard">
       <div className="space-y-6">

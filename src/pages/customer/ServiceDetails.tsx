@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star } from 'lucide-react';
 import servicesData from '../../data/services';
 import type { Review } from '../../data/reviews';
@@ -13,6 +13,15 @@ export default function ServiceDetails() {
   const { id } = useParams();
   const serviceId = Number(id);
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleQuickService = () => {
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(`/book/${serviceId}?fastTrack=true`)}`);
+    } else {
+      navigate(`/book/${serviceId}?fastTrack=true`);
+    }
+  };
 
   const service = useMemo(() => servicesData.find(s => s.id === serviceId), [serviceId]);
 
@@ -94,11 +103,17 @@ export default function ServiceDetails() {
               </div>
               <Link
                 to={user ? `/book/${service.id}` : `/login?redirect=${encodeURIComponent(`/book/${service.id}`)}`}
-                className="block text-center bg-[var(--color-primary-600)] text-white py-3 rounded-lg font-semibold"
+                className="block text-center bg-white border border-[var(--color-primary-600)] text-[var(--color-primary-600)] py-3 rounded-lg font-semibold hover:bg-[var(--color-primary-50)] transition-colors mb-3"
               >
-                Book Now
+                Schedule Booking
               </Link>
-              <div className="mt-4 text-sm text-[var(--color-text-muted)]">Provider assignment is dynamic and happens after booking.</div>
+              <button
+                onClick={handleQuickService}
+                className="w-full block text-center bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+              >
+                Quick Service Now (ASAP)
+              </button>
+              <div className="mt-4 text-sm text-[var(--color-text-muted)] text-center">Auto-matches you with the nearest available professional instantly.</div>
             </div>
           </div>
         </div>

@@ -1,17 +1,42 @@
 import { useParams } from 'react-router-dom';
-import { Phone, MessageSquare, CheckCircle2, Clock, Map as MapIcon, Crosshair } from 'lucide-react';
-
-const timelineSteps = [
-  { status: 'Booking Confirmed', time: '10:00 AM', completed: true },
-  { status: 'Provider Assigned', time: '10:15 AM', completed: true },
-  { status: 'On The Way', time: '10:30 AM', completed: true, active: true },
-  { status: 'Provider Arrived', time: '--', completed: false },
-  { status: 'Service Started', time: '--', completed: false },
-  { status: 'Service Completed', time: '--', completed: false },
-];
+import { useState, useEffect } from 'react';
+import { Phone, MessageSquare, CheckCircle2, Clock, Map as MapIcon, Crosshair, Star } from 'lucide-react';
+import bookingsApi, { type Booking } from '../../api/bookingsApi';
+import providersData from '../../data/providers';
 
 export default function TrackService() {
   const { id } = useParams();
+  const [booking, setBooking] = useState<Booking | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      if (id) {
+        const data = await bookingsApi.getBookingById(id);
+        if (data) setBooking(data);
+      }
+    }
+    load();
+    const interval = setInterval(load, 5000);
+    return () => clearInterval(interval);
+  }, [id]);
+
+  if (!booking) {
+    return <div className="p-8 text-center text-gray-500">Loading tracking details...</div>;
+  }
+
+  const statuses = ['Pending', 'Booking Confirmed', 'Provider Assigned', 'On the Way', 'Arrived', 'Service Started', 'Completed'];
+  const currentIndex = statuses.indexOf(booking.status);
+  
+  const timelineSteps = [
+    { status: 'Booking Confirmed', time: new Date(booking.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), completed: currentIndex >= 1, active: currentIndex === 1 },
+    { status: 'Provider Assigned', time: '--', completed: currentIndex >= 2, active: currentIndex === 2 },
+    { status: 'On the Way', time: '--', completed: currentIndex >= 3, active: currentIndex === 3 },
+    { status: 'Arrived', time: '--', completed: currentIndex >= 4, active: currentIndex === 4 },
+    { status: 'Service Started', time: '--', completed: currentIndex >= 5, active: currentIndex === 5 },
+    { status: 'Completed', time: '--', completed: currentIndex === 6, active: currentIndex === 6 },
+  ];
+
+  const provider = providersData.find(p => p.name === booking.provider) || providersData[0];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -21,14 +46,12 @@ export default function TrackService() {
           <p className="text-[var(--color-text-muted)]">Booking ID: #{id}</p>
         </div>
         <div className="bg-blue-50 text-[var(--color-primary-600)] px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-          <Clock size={16} /> ETA: 15 mins
+          <Clock size={16} /> ETA: {currentIndex >= 6 ? 'Completed' : '15 mins'}
         </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Map / Visual Tracking Area */}
         <div className="flex-[2] bg-gray-200 rounded-2xl border border-[var(--color-border-main)] min-h-[400px] relative overflow-hidden flex flex-col items-center justify-center">
-          {/* Mock Map Background */}
           <div className="absolute inset-0 opacity-20" style={{
             backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
           }}></div>
@@ -36,7 +59,7 @@ export default function TrackService() {
           <div className="z-10 bg-white p-6 rounded-2xl shadow-lg max-w-sm text-center">
             <MapIcon size={48} className="text-gray-400 mx-auto mb-4" />
             <h3 className="font-bold text-[var(--color-text-main)] mb-2">Map View Simulated</h3>
-            <p className="text-sm text-[var(--color-text-muted)]">Live GPS tracking would appear here with a route from the provider to your location.</p>
+            <p className="text-sm text-[var(--color-text-muted)]">Live GPS tracking for {booking.provider} will appear here.</p>
           </div>
 
           <button className="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-md text-[var(--color-primary-600)] hover:bg-gray-50 transition-colors">
@@ -44,21 +67,20 @@ export default function TrackService() {
           </button>
         </div>
 
-        {/* Info & Timeline Area */}
         <div className="flex-1 flex flex-col gap-6">
-          {/* Provider Card */}
           <div className="bg-white p-6 rounded-2xl border border-[var(--color-border-main)]">
             <h3 className="text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-4">Assigned Professional</h3>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold text-2xl">
-                JS
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl ${provider.avatarColor}`}>
+                {booking.provider.charAt(0)}
               </div>
               <div>
-                <h4 className="font-bold text-lg text-[var(--color-text-main)]">Jane Smith</h4>
+                <h4 className="font-bold text-lg text-[var(--color-text-main)]">{booking.provider}</h4>
                 <div className="flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
-                  <span>★ 4.8</span>
+                  <Star size={14} className="fill-yellow-500 text-yellow-500"/>
+                  <span className="font-semibold text-yellow-700">{provider.rating}</span>
                   <span className="text-gray-300">|</span>
-                  <span>124 jobs</span>
+                  <span>{provider.jobsCompleted} jobs</span>
                 </div>
               </div>
             </div>
@@ -73,7 +95,6 @@ export default function TrackService() {
             </div>
           </div>
 
-          {/* Timeline */}
           <div className="bg-white p-6 rounded-2xl border border-[var(--color-border-main)] flex-1">
             <h3 className="text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-6">Tracking Status</h3>
             

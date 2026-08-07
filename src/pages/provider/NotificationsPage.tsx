@@ -1,10 +1,9 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { notifications } from '../../data/providerDashboard';
 import { BellRing, MessageCircleMore, Sparkles, BadgeDollarSign } from 'lucide-react';
 
 export default function NotificationsPage() {
   return (
-    <ProviderShell active="notifications">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -37,6 +36,6 @@ export default function NotificationsPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

@@ -34,8 +34,8 @@ type AuthContextValue = {
   updateUser: (id: string, updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'profession' | 'businessName'>>) => Promise<AuthUser | undefined>;
 };
 
-const CURRENT_USER_KEY = 'quickserve_active_user';
-const USER_RECORDS_KEY = 'quickserve_users';
+const CURRENT_USER_KEY = 'quickservice_active_user';
+const USER_RECORDS_KEY = 'quickservice_users';
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -43,21 +43,21 @@ const MOCK_USERS: AuthUser[] = [
   {
     id: 'mock-customer',
     name: 'Customer User',
-    email: 'user@quickserve.com',
+    email: 'user@quickservice.com',
     role: 'CUSTOMER',
     joinedAt: new Date().toISOString(),
   },
   {
     id: 'mock-admin',
     name: 'Admin User',
-    email: 'admin@quickserve.com',
+    email: 'admin@quickservice.com',
     role: 'ADMIN',
     joinedAt: new Date().toISOString(),
   },
   {
     id: 'mock-provider',
     name: 'Provider User',
-    email: 'provider@quickserve.com',
+    email: 'provider@quickservice.com',
     role: 'SERVICE_PROVIDER',
     joinedAt: new Date().toISOString(),
     providerStatus: 'APPROVED',
@@ -109,9 +109,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const result: AuthUser = userMatch ?? {
       id: `user-${normalized}`,
-      name: normalized === 'admin@quickserve.com' ? 'Admin User' : normalized.includes('provider') ? 'Provider User' : 'New Customer',
+      name: normalized === 'admin@quickservice.com' ? 'Admin User' : normalized.includes('provider') ? 'Provider User' : 'New Customer',
       email: normalized,
-      role: normalized === 'admin@quickserve.com' ? 'ADMIN' : normalized.includes('provider') ? 'SERVICE_PROVIDER' : 'CUSTOMER',
+      role: normalized === 'admin@quickservice.com' ? 'ADMIN' : normalized.includes('provider') ? 'SERVICE_PROVIDER' : 'CUSTOMER',
       joinedAt: new Date().toISOString(),
       providerStatus: normalized.includes('provider') ? 'APPROVED' : undefined,
     };

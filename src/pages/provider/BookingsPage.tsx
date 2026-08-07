@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Filter, Search, Sparkles } from 'lucide-react';
-import ProviderShell from '../../components/provider/ProviderShell';
 import StatusBadge from '../../components/provider/StatusBadge';
 import { bookings as bookingSeed } from '../../data/providerDashboard';
 
@@ -28,7 +27,7 @@ export default function BookingsPage() {
   }, [search, statusFilter, periodFilter]);
 
   return (
-    <ProviderShell active="bookings">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -129,6 +128,6 @@ export default function BookingsPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

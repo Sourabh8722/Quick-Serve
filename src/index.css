@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-600: #0052CC;
-  --color-primary-800: #003D9B;
-  --color-success-600: #34A853;
-  --color-success-800: #006E2C;
-  --color-error-600: #BA1A1A;
-  --color-background: #F9F9FF;
+  --color-primary-400: #60A5FA;
+  --color-primary-600: #2563EB;
+  --color-primary-800: #1E3A8A;
+  --color-primary-900: #172554;
+  --color-success-600: #10B981;
+  --color-success-800: #065F46;
+  --color-error-600: #EF4444;
+  --color-background: #F8FAFC;
   --color-surface: #FFFFFF;
-  --color-text-main: #041B3C;
-  --color-text-muted: #434654;
-  --color-border-main: #C3C6D6;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  --color-border-main: #E2E8F0;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -26,5 +28,23 @@
     @apply bg-[var(--color-background)] text-[var(--color-text-main)] font-sans antialiased;
     margin: 0;
     padding: 0;
+  }
+}
+
+@layer utilities {
+  .bg-glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+  .bg-glass-dark {
+    @apply bg-slate-900/60 backdrop-blur-xl border border-white/10;
+  }
+  .shadow-soft {
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+  }
+  .shadow-hover {
+    box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500;
   }
 }

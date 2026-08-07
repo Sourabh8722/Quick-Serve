@@ -36,7 +36,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-[var(--color-primary-600)] text-white rounded-md flex items-center justify-center font-bold text-xl">Q</div>
-          <span className="font-bold text-xl text-[var(--color-primary-800)]">QuickServe</span>
+          <span className="font-bold text-xl text-[var(--color-primary-800)]">Quick Service</span>
         </Link>
 
         {/* Right Nav */}
@@ -63,7 +63,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[var(--color-primary-600)] text-white rounded-md flex items-center justify-center font-bold text-xl">Q</div>
-              <span className="font-bold text-xl text-[var(--color-primary-800)]">QuickServe</span>
+              <span className="font-bold text-xl text-[var(--color-primary-800)]">Quick Service</span>
             </div>
             <p className="text-sm text-[var(--color-text-muted)]">
               The unified home-services marketplace. Book trusted professionals for all your home needs.
@@ -93,7 +93,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="border-t border-[var(--color-border-main)] mt-8 pt-8 text-center text-sm text-[var(--color-text-muted)]">
-          &copy; {new Date().getFullYear()} QuickServe. All rights reserved.
+          &copy; {new Date().getFullYear()} Quick Service. All rights reserved.
         </div>
       </div>
     </footer>

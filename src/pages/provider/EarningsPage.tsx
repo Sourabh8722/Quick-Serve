@@ -1,10 +1,9 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { earningsSummary, revenueChartData, topServices } from '../../data/providerDashboard';
 import { AreaChart, Area, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 export default function EarningsPage() {
   return (
-    <ProviderShell active="earnings">
+    <>
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {earningsSummary.map((item) => (
@@ -63,6 +62,6 @@ export default function EarningsPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

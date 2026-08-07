@@ -135,7 +135,7 @@ export default function AuthRegister() {
         <div className="flex items-center justify-between mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Create your account</h1>
-            <p className="text-[var(--color-text-muted)]">Choose a role and start with QuickServe.</p>
+            <p className="text-[var(--color-text-muted)]">Choose a role and start with Quick Service.</p>
           </div>
           <div className="w-12 h-12 bg-[var(--color-primary-600)] rounded-2xl flex items-center justify-center text-white">
             <UserPlus size={22} />
@@ -302,7 +302,7 @@ export default function AuthRegister() {
               className="mt-1 h-4 w-4 rounded border-[var(--color-border-main)] text-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
             />
             <label htmlFor="terms" className="text-sm text-[var(--color-text-main)]">
-              I agree to the QuickServe <span className="font-semibold">terms of service</span> and <span className="font-semibold">privacy policy</span>.
+              I agree to the Quick Service <span className="font-semibold">terms of service</span> and <span className="font-semibold">privacy policy</span>.
             </label>
           </div>
 

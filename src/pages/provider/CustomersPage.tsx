@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Phone, Mail, MapPin, MessageCircleMore } from 'lucide-react';
-import ProviderShell from '../../components/provider/ProviderShell';
 import { customers as customerSeed } from '../../data/providerDashboard';
 
 export default function CustomersPage() {
@@ -26,7 +25,7 @@ export default function CustomersPage() {
   }, [search, filter]);
 
   return (
-    <ProviderShell active="customers">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -94,6 +93,6 @@ export default function CustomersPage() {
           )}
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

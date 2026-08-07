@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Phone, Mail, MapPin, Clock3, BadgeCheck } from 'lucide-react';
-import ProviderShell from '../../components/provider/ProviderShell';
 import { customers } from '../../data/providerDashboard';
 
 export default function CustomerDetailsPage() {
@@ -9,14 +8,14 @@ export default function CustomerDetailsPage() {
 
   if (!customer) {
     return (
-      <ProviderShell active="customers">
+      <>
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">Customer profile not found.</div>
-      </ProviderShell>
+      </>
     );
   }
 
   return (
-    <ProviderShell active="customers">
+    <>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <Link to="/provider/customers" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
@@ -102,6 +101,6 @@ export default function CustomerDetailsPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

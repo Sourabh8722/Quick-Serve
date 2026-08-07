@@ -1,4 +1,3 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { BriefcaseBusiness, Clock3 } from 'lucide-react';
 
 const services = [
@@ -9,7 +8,7 @@ const services = [
 
 export default function ServicesPage() {
   return (
-    <ProviderShell active="services">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -39,6 +38,6 @@ export default function ServicesPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

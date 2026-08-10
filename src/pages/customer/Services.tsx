@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Filter, Star, Lightbulb } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import servicesData, { serviceCategories } from '../../data/services';
+import { serviceCategories } from '../../data/services';
 import type { Service } from '../../data/services';
 import { useAuth } from '../../context/AuthContext';
 
@@ -58,8 +58,22 @@ export default function Services() {
 
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [servicesData, setServicesData] = useState<Service[]>([]);
 
   const suggestedCategory = useMemo(() => suggestCategory(searchTerm), [searchTerm]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/services')
+      .then(res => res.json())
+      .then(data => {
+        setServicesData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   // Keep URL in sync with local state
   useEffect(() => {
@@ -72,13 +86,6 @@ export default function Services() {
     if (sort && sort !== 'recommended') params.sort = sort;
     setSearchParams(params, { replace: true });
   }, [searchTerm, category, minPrice, maxPrice, minRating, sort, setSearchParams]);
-
-  // fake loading to show skeletons
-  useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => setLoading(false), 250);
-    return () => clearTimeout(t);
-  }, [searchTerm, category, minPrice, maxPrice, minRating, sort]);
 
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();

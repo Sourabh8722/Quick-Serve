@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuickServe.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b43df926eef92c2ff56d4a39432ba5d951362d53")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abcce5b3231e71f39d04b16a19f08646f4b045e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuickServe.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuickServe.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserPlus, Mail, Lock, Briefcase, Home, ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Mail, Lock, Briefcase, Home, Phone, CheckCircle2 } from 'lucide-react';
 
 const DEMO_OTP = '123456';
 
@@ -17,12 +17,6 @@ const roleOptions = [
     label: 'Service Provider',
     description: 'Offer your skills, accept jobs, and manage your schedule.',
     icon: Briefcase,
-  },
-  {
-    value: 'ADMIN' as const,
-    label: 'Admin',
-    description: 'Manage the platform, approve providers, and monitor bookings.',
-    icon: ShieldCheck,
   },
 ];
 
@@ -115,9 +109,7 @@ export default function AuthRegister() {
       });
 
       const nextRoute =
-        role === 'ADMIN'
-          ? '/admin'
-          : role === 'SERVICE_PROVIDER'
+        role === 'SERVICE_PROVIDER'
           ? '/provider/dashboard'
           : '/dashboard';
 
@@ -145,7 +137,7 @@ export default function AuthRegister() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <fieldset className="space-y-4">
             <legend className="text-sm font-semibold text-[var(--color-text-main)]">Choose Your Role</legend>
-            <div role="radiogroup" aria-label="Choose your role" className="grid gap-3 sm:grid-cols-3">
+            <div role="radiogroup" aria-label="Choose your role" className="grid gap-3 sm:grid-cols-2">
               {roleOptions.map((option) => {
                 const Icon = option.icon;
                 const isSelected = role === option.value;

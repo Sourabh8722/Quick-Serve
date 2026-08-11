@@ -102,7 +102,7 @@ export default function Services() {
       list = list.filter(s => s.category === category);
     }
 
-    list = list.filter(s => s.price >= minPrice && s.price <= maxPrice && s.rating >= minRating);
+    list = list.filter(s => s.price >= minPrice && s.price <= maxPrice && (s.rating || 0) >= minRating);
 
     switch (sort) {
       case 'price-asc':
@@ -112,10 +112,10 @@ export default function Services() {
         list.sort((a, b) => b.price - a.price);
         break;
       case 'rating-desc':
-        list.sort((a, b) => b.rating - a.rating);
+        list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'popular':
-        list.sort((a, b) => b.reviews - a.reviews);
+        list.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
         break;
       default:
         // recommended - keep original order
@@ -299,7 +299,7 @@ export default function Services() {
                     <div className="flex items-center gap-4 text-sm mb-4">
                       <div className="flex items-center gap-1 text-[var(--color-text-main)] font-semibold">
                         <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                        {service.rating} <span className="text-[var(--color-text-muted)] font-normal">({service.reviews})</span>
+                        {service.rating || 0} <span className="text-[var(--color-text-muted)] font-normal">({service.reviews || 0})</span>
                       </div>
                     </div>
 

@@ -1,9 +1,9 @@
 import { BriefcaseBusiness, Clock3 } from 'lucide-react';
 
 const services = [
-  { title: 'Residential Repairs', description: 'Fast-response home repair for urgent maintenance needs.', duration: '1-3 hrs', price: '$120+', tag: 'Popular' },
-  { title: 'Annual Maintenance', description: 'Scheduled checkups and preventive care for recurring clients.', duration: 'Flexible', price: '$180+', tag: 'Best Value' },
-  { title: 'Premium Installation', description: 'High-quality installations with guaranteed workmanship.', duration: 'Half day', price: '$240+', tag: 'Priority' },
+  { title: 'Residential Repairs', description: 'Fast-response home repair for urgent maintenance needs.', duration: '1-3 hrs', price: '₹120+', tag: 'Popular' },
+  { title: 'Annual Maintenance', description: 'Scheduled checkups and preventive care for recurring clients.', duration: 'Flexible', price: '₹180+', tag: 'Best Value' },
+  { title: 'Premium Installation', description: 'High-quality installations with guaranteed workmanship.', duration: 'Half day', price: '₹240+', tag: 'Priority' },
 ];
 
 export default function ServicesPage() {

@@ -110,7 +110,7 @@ export default function ProviderDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-600">Average booking value</p>
-                    <p className="mt-1 text-xl font-semibold text-slate-900">$185</p>
+                    <p className="mt-1 text-xl font-semibold text-slate-900">₹185</p>
                   </div>
                   <div className="rounded-2xl bg-white/70 p-3 text-sky-500">
                     <CircleDollarSign size={20} />

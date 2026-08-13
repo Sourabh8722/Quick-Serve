@@ -1,9 +1,8 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { Camera } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
-    <ProviderShell active="settings">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -43,7 +42,7 @@ export default function SettingsPage() {
                 </label>
                 <label className="text-sm text-slate-600">
                   <span className="mb-2 block font-semibold text-slate-900">Email</span>
-                  <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none" defaultValue="maya@quickserve.com" />
+                  <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none" defaultValue="maya@quickservice.com" />
                 </label>
               </div>
               <label className="text-sm text-slate-600">
@@ -68,6 +67,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

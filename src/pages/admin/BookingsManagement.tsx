@@ -1,10 +1,25 @@
-const mockBookings = [
-  { id: 'B-1023', customer: 'Jane Smith', service: 'Deep Kitchen Cleaning', date: 'Jul 19, 2026', status: 'Confirmed' },
-  { id: 'B-1034', customer: 'Mark Anderson', service: 'Leaking Faucet Repair', date: 'Jul 17, 2026', status: 'Completed' },
-  { id: 'B-1045', customer: 'Emily Loft', service: 'AC Maintenance', date: 'Jul 15, 2026', status: 'In Progress' },
-];
+import { useEffect, useState } from 'react';
+import bookingsApi from '../../api/bookingsApi';
+import type { Booking } from '../../api/bookingsApi';
 
 export default function BookingsManagement() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBookings = async () => {
+      try {
+        const allBookings = await bookingsApi.fetchAllBookings();
+        setBookings(allBookings);
+      } catch (error) {
+        console.error('Failed to fetch bookings', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadBookings();
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -26,15 +41,25 @@ export default function BookingsManagement() {
             </tr>
           </thead>
           <tbody>
-            {mockBookings.map((booking) => (
-              <tr key={booking.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{booking.id}</td>
-                <td className="px-6 py-4">{booking.customer}</td>
-                <td className="px-6 py-4">{booking.service}</td>
-                <td className="px-6 py-4">{booking.date}</td>
-                <td className="px-6 py-4">{booking.status}</td>
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">Loading bookings…</td>
               </tr>
-            ))}
+            ) : bookings.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-text-muted)]">No bookings found.</td>
+              </tr>
+            ) : (
+              bookings.map((booking) => (
+                <tr key={booking.id} className="border-t border-[var(--color-border-main)] hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-semibold text-[var(--color-text-main)]">{booking.id.slice(0, 8)}</td>
+                  <td className="px-6 py-4">{booking.customerName}</td>
+                  <td className="px-6 py-4">{booking.serviceName}</td>
+                  <td className="px-6 py-4">{booking.date}</td>
+                  <td className="px-6 py-4">{booking.status}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

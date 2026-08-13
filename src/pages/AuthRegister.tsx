@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserPlus, Mail, Lock, Briefcase, Home, ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Mail, Lock, Briefcase, Home, Phone, CheckCircle2 } from 'lucide-react';
 
 const DEMO_OTP = '123456';
 
@@ -17,12 +17,6 @@ const roleOptions = [
     label: 'Service Provider',
     description: 'Offer your skills, accept jobs, and manage your schedule.',
     icon: Briefcase,
-  },
-  {
-    value: 'ADMIN' as const,
-    label: 'Admin',
-    description: 'Manage the platform, approve providers, and monitor bookings.',
-    icon: ShieldCheck,
   },
 ];
 
@@ -115,9 +109,7 @@ export default function AuthRegister() {
       });
 
       const nextRoute =
-        role === 'ADMIN'
-          ? '/admin'
-          : role === 'SERVICE_PROVIDER'
+        role === 'SERVICE_PROVIDER'
           ? '/provider/dashboard'
           : '/dashboard';
 
@@ -135,7 +127,7 @@ export default function AuthRegister() {
         <div className="flex items-center justify-between mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Create your account</h1>
-            <p className="text-[var(--color-text-muted)]">Choose a role and start with QuickServe.</p>
+            <p className="text-[var(--color-text-muted)]">Choose a role and start with Quick Service.</p>
           </div>
           <div className="w-12 h-12 bg-[var(--color-primary-600)] rounded-2xl flex items-center justify-center text-white">
             <UserPlus size={22} />
@@ -145,7 +137,7 @@ export default function AuthRegister() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <fieldset className="space-y-4">
             <legend className="text-sm font-semibold text-[var(--color-text-main)]">Choose Your Role</legend>
-            <div role="radiogroup" aria-label="Choose your role" className="grid gap-3 sm:grid-cols-3">
+            <div role="radiogroup" aria-label="Choose your role" className="grid gap-3 sm:grid-cols-2">
               {roleOptions.map((option) => {
                 const Icon = option.icon;
                 const isSelected = role === option.value;
@@ -302,7 +294,7 @@ export default function AuthRegister() {
               className="mt-1 h-4 w-4 rounded border-[var(--color-border-main)] text-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
             />
             <label htmlFor="terms" className="text-sm text-[var(--color-text-main)]">
-              I agree to the QuickServe <span className="font-semibold">terms of service</span> and <span className="font-semibold">privacy policy</span>.
+              I agree to the Quick Service <span className="font-semibold">terms of service</span> and <span className="font-semibold">privacy policy</span>.
             </label>
           </div>
 

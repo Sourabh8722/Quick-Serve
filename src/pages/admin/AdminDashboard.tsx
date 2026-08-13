@@ -42,7 +42,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard 
           title="TOTAL REVENUE" 
-          value="$128,430.00" 
+          value="₹128,430.00" 
           trend={12} 
           icon={<DollarSign size={20} />} 
         />

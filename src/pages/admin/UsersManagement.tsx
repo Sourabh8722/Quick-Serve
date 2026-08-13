@@ -1,7 +1,7 @@
 const mockUsers = [
-  { id: 1, name: 'Customer User', email: 'user@quickserve.com', status: 'Active' },
-  { id: 2, name: 'Admin User', email: 'admin@quickserve.com', status: 'Active' },
-  { id: 3, name: 'New Customer', email: 'new@quickserve.com', status: 'Pending' },
+  { id: 1, name: 'Customer User', email: 'user@quickservice.com', status: 'Active' },
+  { id: 2, name: 'Admin User', email: 'admin@quickservice.com', status: 'Active' },
+  { id: 3, name: 'New Customer', email: 'new@quickservice.com', status: 'Pending' },
 ];
 
 export default function UsersManagement() {

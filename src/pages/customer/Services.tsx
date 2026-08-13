@@ -1,12 +1,51 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Search, Filter, Star } from 'lucide-react';
+import { Search, Filter, Star, Lightbulb } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import servicesData, { serviceCategories } from '../../data/services';
+import { serviceCategories } from '../../data/services';
 import type { Service } from '../../data/services';
 import { useAuth } from '../../context/AuthContext';
 
 type SortOption = 'recommended' | 'price-asc' | 'price-desc' | 'rating-desc' | 'popular';
 
+const categoryKeywords: Record<string, string[]> = {
+  'Cleaning': ['clean', 'dust', 'mess', 'dirty', 'wash', 'stain', 'spill', 'sweep', 'mop', 'garbage', 'trash', 'spot'],
+  'Plumber': ['leak', 'pipe', 'water', 'drip', 'tap', 'faucet', 'sink', 'toilet', 'flush', 'drain', 'clog', 'block', 'plumbing'],
+  'Electrician': ['spark', 'power', 'light', 'wire', 'short circuit', 'switch', 'current', 'shock', 'fuse', 'plug', 'electricity', 'electric'],
+  'Painting': ['paint', 'color', 'wall', 'peeling', 'brush', 'coat', 'repaint'],
+  'AC Repair': ['ac', 'air condition', 'cooling', 'cool', 'not working', 'hot air', 'gas', 'hvac'],
+  'Appliance Repair': ['fridge', 'refrigerator', 'washing machine', 'microwave', 'oven', 'tv', 'machine', 'appliance', 'broken', 'repair'],
+  'Carpentry': ['wood', 'furniture', 'door', 'window', 'table', 'chair', 'creak', 'hinge', 'cabinet', 'carpenter', 'fix'],
+  'Beauty': ['hair', 'makeup', 'massage', 'facial', 'pedicure', 'manicure', 'waxing', 'salon', 'parlor', 'grooming', 'beauty', 'skin', 'face'],
+};
+
+function suggestCategory(query: string): string | null {
+  const words = query.toLowerCase().match(/\b\w+\b/g) || [];
+  if (words.length === 0) return null;
+
+  let bestCategory = null;
+  let maxMatches = 0;
+
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    let matches = 0;
+    for (const word of words) {
+      if (keywords.includes(word)) {
+        matches++;
+      }
+    }
+    for (const keyword of keywords) {
+      if (keyword.includes(' ') && query.toLowerCase().includes(keyword)) {
+        matches += 2;
+      }
+    }
+    
+    if (matches > maxMatches) {
+      maxMatches = matches;
+      bestCategory = category;
+    }
+  }
+
+  return bestCategory;
+}
 export default function Services() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -19,6 +58,22 @@ export default function Services() {
 
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [servicesData, setServicesData] = useState<Service[]>([]);
+
+  const suggestedCategory = useMemo(() => suggestCategory(searchTerm), [searchTerm]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/services')
+      .then(res => res.json())
+      .then(data => {
+        setServicesData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   // Keep URL in sync with local state
   useEffect(() => {
@@ -32,13 +87,6 @@ export default function Services() {
     setSearchParams(params, { replace: true });
   }, [searchTerm, category, minPrice, maxPrice, minRating, sort, setSearchParams]);
 
-  // fake loading to show skeletons
-  useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => setLoading(false), 250);
-    return () => clearTimeout(t);
-  }, [searchTerm, category, minPrice, maxPrice, minRating, sort]);
-
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     let list = servicesData.slice();
@@ -46,8 +94,7 @@ export default function Services() {
     if (term) {
       list = list.filter(s =>
         s.name.toLowerCase().includes(term) ||
-        s.category.toLowerCase().includes(term) ||
-        s.provider.toLowerCase().includes(term)
+        s.category.toLowerCase().includes(term)
       );
     }
 
@@ -55,7 +102,7 @@ export default function Services() {
       list = list.filter(s => s.category === category);
     }
 
-    list = list.filter(s => s.price >= minPrice && s.price <= maxPrice && s.rating >= minRating);
+    list = list.filter(s => s.price >= minPrice && s.price <= maxPrice && (s.rating || 0) >= minRating);
 
     switch (sort) {
       case 'price-asc':
@@ -65,10 +112,10 @@ export default function Services() {
         list.sort((a, b) => b.price - a.price);
         break;
       case 'rating-desc':
-        list.sort((a, b) => b.rating - a.rating);
+        list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'popular':
-        list.sort((a, b) => b.reviews - a.reviews);
+        list.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
         break;
       default:
         // recommended - keep original order
@@ -117,6 +164,29 @@ export default function Services() {
           </button>
         </div>
       </div>
+
+      {suggestedCategory && category !== suggestedCategory && (
+        <div className="mb-8 bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-100 p-2 rounded-full">
+              <Lightbulb size={20} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-blue-800 font-medium">Looks like you need help with {suggestedCategory}.</p>
+              <p className="text-xs text-blue-600">We found the best services for your problem.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => {
+              setCategory(suggestedCategory);
+              setSearchTerm('');
+            }}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto text-center"
+          >
+            View {suggestedCategory} Services
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar (desktop) */}
@@ -224,15 +294,12 @@ export default function Services() {
                       </h3>
                     </div>
 
-                    <div className="flex items-center gap-1 text-sm text-[var(--color-text-muted)] mb-4">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] ${service.image}`}>{service.provider.charAt(0)}</div>
-                      <span>{service.provider}</span>
-                    </div>
+
 
                     <div className="flex items-center gap-4 text-sm mb-4">
                       <div className="flex items-center gap-1 text-[var(--color-text-main)] font-semibold">
                         <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                        {service.rating} <span className="text-[var(--color-text-muted)] font-normal">({service.reviews})</span>
+                        {service.rating || 0} <span className="text-[var(--color-text-muted)] font-normal">({service.reviews || 0})</span>
                       </div>
                     </div>
 

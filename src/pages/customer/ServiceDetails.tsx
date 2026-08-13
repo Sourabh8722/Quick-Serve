@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star } from 'lucide-react';
 import servicesData from '../../data/services';
 import type { Review } from '../../data/reviews';
@@ -13,6 +13,15 @@ export default function ServiceDetails() {
   const { id } = useParams();
   const serviceId = Number(id);
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleQuickService = () => {
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(`/book/${serviceId}?fastTrack=true`)}`);
+    } else {
+      navigate(`/book/${serviceId}?fastTrack=true`);
+    }
+  };
 
   const service = useMemo(() => servicesData.find(s => s.id === serviceId), [serviceId]);
 
@@ -41,7 +50,7 @@ export default function ServiceDetails() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-text-main)]">{service.name}</h1>
-              <div className="text-sm text-[var(--color-text-muted)]">{service.category} • by {service.provider}</div>
+              <div className="text-sm text-[var(--color-text-muted)]">{service.category}</div>
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end gap-2">
@@ -60,15 +69,23 @@ export default function ServiceDetails() {
 
               <h4 className="font-semibold mb-2">What's included</h4>
               <ul className="list-disc pl-5 text-[var(--color-text-muted)] mb-4">
-                <li>Skilled technician</li>
-                <li>Tools and basic supplies</li>
-                <li>Quality check after service</li>
+                {service.includes ? service.includes.map((item, idx) => <li key={idx}>{item}</li>) : (
+                  <>
+                    <li>Skilled technician</li>
+                    <li>Tools and basic supplies</li>
+                    <li>Quality check after service</li>
+                  </>
+                )}
               </ul>
 
               <h4 className="font-semibold mb-2">What's not included</h4>
               <ul className="list-disc pl-5 text-[var(--color-text-muted)] mb-4">
-                <li>Major spare parts</li>
-                <li>Out-of-scope repairs</li>
+                {service.excludes ? service.excludes.map((item, idx) => <li key={idx}>{item}</li>) : (
+                  <>
+                    <li>Major spare parts</li>
+                    <li>Out-of-scope repairs</li>
+                  </>
+                )}
               </ul>
 
               <h4 className="font-semibold mb-2">Frequently asked questions</h4>
@@ -86,11 +103,17 @@ export default function ServiceDetails() {
               </div>
               <Link
                 to={user ? `/book/${service.id}` : `/login?redirect=${encodeURIComponent(`/book/${service.id}`)}`}
-                className="block text-center bg-[var(--color-primary-600)] text-white py-3 rounded-lg font-semibold"
+                className="block text-center bg-white border border-[var(--color-primary-600)] text-[var(--color-primary-600)] py-3 rounded-lg font-semibold hover:bg-[var(--color-primary-50)] transition-colors mb-3"
               >
-                Book Now
+                Schedule Booking
               </Link>
-              <div className="mt-4 text-sm text-[var(--color-text-muted)]">Provider assignment is dynamic and happens after booking.</div>
+              <button
+                onClick={handleQuickService}
+                className="w-full block text-center bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+              >
+                Quick Service Now (ASAP)
+              </button>
+              <div className="mt-4 text-sm text-[var(--color-text-muted)] text-center">Auto-matches you with the nearest available professional instantly.</div>
             </div>
           </div>
         </div>

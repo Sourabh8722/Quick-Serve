@@ -1,15 +1,14 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { BriefcaseBusiness, Clock3 } from 'lucide-react';
 
 const services = [
-  { title: 'Residential Repairs', description: 'Fast-response home repair for urgent maintenance needs.', duration: '1-3 hrs', price: '$120+', tag: 'Popular' },
-  { title: 'Annual Maintenance', description: 'Scheduled checkups and preventive care for recurring clients.', duration: 'Flexible', price: '$180+', tag: 'Best Value' },
-  { title: 'Premium Installation', description: 'High-quality installations with guaranteed workmanship.', duration: 'Half day', price: '$240+', tag: 'Priority' },
+  { title: 'Residential Repairs', description: 'Fast-response home repair for urgent maintenance needs.', duration: '1-3 hrs', price: '₹120+', tag: 'Popular' },
+  { title: 'Annual Maintenance', description: 'Scheduled checkups and preventive care for recurring clients.', duration: 'Flexible', price: '₹180+', tag: 'Best Value' },
+  { title: 'Premium Installation', description: 'High-quality installations with guaranteed workmanship.', duration: 'Half day', price: '₹240+', tag: 'Priority' },
 ];
 
 export default function ServicesPage() {
   return (
-    <ProviderShell active="services">
+    <>
       <div className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -39,6 +38,6 @@ export default function ServicesPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

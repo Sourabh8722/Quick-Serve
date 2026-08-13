@@ -1,12 +1,16 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import StatCard from '../../components/provider/StatCard';
 import { overviewStats, completionChartData, revenueChartData, topServices } from '../../data/providerDashboard';
 import { AreaChart, Area, BarChart, Bar, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ArrowUpRight, CircleDollarSign, TrendingUp } from 'lucide-react';
+import {
+  ArrowUpRight,
+  CircleDollarSign,
+  TrendingUp,
+} from 'lucide-react';
 
 export default function ProviderDashboard() {
+
   return (
-    <ProviderShell active="dashboard">
+    <>
       <div className="space-y-6">
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {overviewStats.slice(0, 4).map((stat) => (
@@ -106,7 +110,7 @@ export default function ProviderDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-600">Average booking value</p>
-                    <p className="mt-1 text-xl font-semibold text-slate-900">$185</p>
+                    <p className="mt-1 text-xl font-semibold text-slate-900">₹185</p>
                   </div>
                   <div className="rounded-2xl bg-white/70 p-3 text-sky-500">
                     <CircleDollarSign size={20} />
@@ -125,6 +129,6 @@ export default function ProviderDashboard() {
           </div>
         </section>
       </div>
-    </ProviderShell>
+    </>
   );
 }

@@ -1,10 +1,9 @@
-import ProviderShell from '../../components/provider/ProviderShell';
 import { availabilityDays, weeklyHours, certificates, galleryImages } from '../../data/providerDashboard';
 import { Clock3, CalendarDays, ShieldCheck, Camera } from 'lucide-react';
 
 export default function AvailabilityPage() {
   return (
-    <ProviderShell active="availability">
+    <>
       <div className="space-y-6">
         <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -97,6 +96,6 @@ export default function AvailabilityPage() {
           </div>
         </div>
       </div>
-    </ProviderShell>
+    </>
   );
 }

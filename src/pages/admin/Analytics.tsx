@@ -22,7 +22,7 @@ export default function Analytics() {
     <div className="max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[var(--color-primary-800)]">Analytics</h1>
-        <p className="text-[var(--color-text-muted)]">High-level performance metrics for QuickServe.</p>
+        <p className="text-[var(--color-text-muted)]">High-level performance metrics for Quick Service.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

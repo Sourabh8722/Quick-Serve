@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { services as defaultServices } from '../../data/services';
 
 type Service = {
   id: number;
@@ -10,16 +11,19 @@ type Service = {
 };
 
 export default function ServicesManagement() {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<Service[]>(defaultServices);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadServices = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/services');
-        setServices(res.data);
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setServices(res.data);
+        }
       } catch (error) {
-        console.error('Failed to fetch services', error);
+        console.warn('Failed to fetch backend services, using fallback', error);
+        setServices(defaultServices);
       } finally {
         setLoading(false);
       }

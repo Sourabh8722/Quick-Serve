@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Filter, Star, Lightbulb } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { serviceCategories } from '../../data/services';
+import { services as defaultServices, serviceCategories } from '../../data/services';
 import type { Service } from '../../data/services';
 import { useAuth } from '../../context/AuthContext';
 
@@ -58,19 +58,25 @@ export default function Services() {
 
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [servicesData, setServicesData] = useState<Service[]>([]);
+  const [servicesData, setServicesData] = useState<Service[]>(defaultServices);
 
   const suggestedCategory = useMemo(() => suggestCategory(searchTerm), [searchTerm]);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/services')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Network response not ok');
+        return res.json();
+      })
       .then(data => {
-        setServicesData(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setServicesData(data);
+        }
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.warn('Backend service API unreachable, using default services:', err);
+        setServicesData(defaultServices);
         setLoading(false);
       });
   }, []);
@@ -275,45 +281,48 @@ export default function Services() {
               <button onClick={resetFilters} className="bg-[var(--color-primary-600)] text-white px-4 py-2 rounded-lg">Clear Filters</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((service: Service) => (
-                <div key={service.id} className="bg-white border border-[var(--color-border-main)] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
-                  <div className="h-40 bg-gray-100 relative">
+                <div key={service.id} className="group bg-white border border-[var(--color-border-main)] rounded-3xl overflow-hidden hover:shadow-hover hover:border-blue-100 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
+                  <div className="h-48 bg-gray-100 relative overflow-hidden">
                     {service.imageUrl ? (
-                      <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover" />
+                      <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-gray-400">Image</div>
                     )}
-                    <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded-md text-xs font-bold text-[var(--color-primary-800)] shadow-sm">{service.category}</div>
+                    <div className="absolute top-4 left-4 bg-glass px-3 py-1.5 rounded-full text-xs font-bold text-[var(--color-primary-700)] shadow-sm">{service.category}</div>
                   </div>
 
-                  <div className="p-5 flex-1 flex flex-col">
+                  <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-lg text-[var(--color-text-main)] leading-tight">
-                        <Link to={`/services/${service.id}`} className="hover:underline">{service.name}</Link>
+                      <h3 className="font-bold text-lg text-[var(--color-text-main)] leading-snug">
+                        <Link to={`/services/${service.id}`} className="hover:text-[var(--color-primary-600)] transition-colors">{service.name}</Link>
                       </h3>
                     </div>
 
+                    <p className="text-sm text-[var(--color-text-muted)] line-clamp-2 mb-4 mt-1">
+                      {service.description}
+                    </p>
 
-
-                    <div className="flex items-center gap-4 text-sm mb-4">
-                      <div className="flex items-center gap-1 text-[var(--color-text-main)] font-semibold">
-                        <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                        {service.rating || 0} <span className="text-[var(--color-text-muted)] font-normal">({service.reviews || 0})</span>
+                    <div className="flex items-center gap-4 text-sm mb-5">
+                      <div className="flex items-center gap-1 text-[var(--color-text-main)] font-semibold bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md">
+                        <Star size={14} className="text-amber-500 fill-amber-500" />
+                        <span>{service.rating || 0}</span>
                       </div>
+                      <span className="text-[var(--color-text-muted)]">({service.reviews || 0} reviews)</span>
                     </div>
 
                     <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                       <div>
-                        <div className="text-xs text-[var(--color-text-muted)]">Starting at</div>
-                        <div className="font-bold text-lg text-[var(--color-primary-800)]">₹{service.price}</div>
+                        <div className="text-xs text-[var(--color-text-muted)] font-medium">Starting at</div>
+                        <div className="font-extrabold text-xl text-[var(--color-primary-800)]">₹{service.price}</div>
                       </div>
                       <Link
-                      to={user ? `/book/${service.id}` : `/login?redirect=${encodeURIComponent(`/book/${service.id}`)}`}
-                      className="bg-[var(--color-primary-600)] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--color-primary-800)] transition-colors"
-                    >
-                      Book Now
-                    </Link>
+                        to={user ? `/book/${service.id}` : `/login?redirect=${encodeURIComponent(`/book/${service.id}`)}`}
+                        className="bg-[var(--color-primary-600)] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[var(--color-primary-800)] hover:shadow-md transition-all shadow-sm"
+                      >
+                        Book Now
+                      </Link>
                     </div>
                   </div>
                 </div>

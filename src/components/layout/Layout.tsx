@@ -14,11 +14,17 @@ const AuthNav = () => {
     );
   }
 
+  const getDashboardPath = () => {
+    if (user.role === 'ADMIN') return '/admin';
+    if (user.role === 'SERVICE_PROVIDER') return '/provider/dashboard';
+    return '/dashboard';
+  };
+
   return (
     <>
-      <Link to="/profile" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[var(--color-primary-600)] text-white rounded-full text-sm font-medium hover:bg-[var(--color-primary-800)] transition-colors">
+      <Link to={getDashboardPath()} className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary-600)] text-white rounded-full text-sm font-medium hover:bg-[var(--color-primary-800)] transition-all hover:scale-102">
         <User size={16} />
-        <span className="hidden sm:inline">{user.name.split(' ')[0]}</span>
+        <span>{user.name.split(' ')[0]}'s Portal</span>
       </Link>
       <button onClick={logout} className="flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border-main)] rounded-full text-sm font-medium text-[var(--color-text-main)] hover:bg-gray-50 transition-colors">
         <LogOut size={16} />

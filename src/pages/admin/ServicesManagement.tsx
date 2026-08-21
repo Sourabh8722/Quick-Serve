@@ -10,6 +10,16 @@ type Service = {
   durationMinutes: number;
 };
 
+function formatDuration(durationMinutes: number) {
+  if (durationMinutes < 60) {
+    return `${durationMinutes} min${durationMinutes === 1 ? '' : 's'}`;
+  }
+
+  const hours = durationMinutes / 60;
+  const formattedHours = Number.isInteger(hours) ? hours : hours.toFixed(1);
+  return `${formattedHours} hr${hours === 1 ? '' : 's'}`;
+}
+
 export default function ServicesManagement() {
   const [services, setServices] = useState<Service[]>(defaultServices);
   const [loading, setLoading] = useState(true);
@@ -43,7 +53,7 @@ export default function ServicesManagement() {
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Category</th>
               <th className="px-6 py-4">Price</th>
-              <th className="px-6 py-4">Duration (mins)</th>
+              <th className="px-6 py-4">Duration</th>
             </tr>
           </thead>
           <tbody>
@@ -62,7 +72,7 @@ export default function ServicesManagement() {
                   <td className="px-6 py-4">{service.name}</td>
                   <td className="px-6 py-4">{service.category}</td>
                   <td className="px-6 py-4">₹{service.price}</td>
-                  <td className="px-6 py-4">{service.durationMinutes}</td>
+                  <td className="px-6 py-4">{formatDuration(service.durationMinutes)}</td>
                 </tr>
               ))
             )}

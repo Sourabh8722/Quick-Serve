@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Phone, MessageSquare, CheckCircle2, Clock, Map as MapIcon, Crosshair, Star } from 'lucide-react';
+import { Phone, MessageSquare, CheckCircle2, Clock, ExternalLink, MapPin, Star } from 'lucide-react';
 import bookingsApi, { type Booking } from '../../api/bookingsApi';
 import providersData from '../../data/providers';
 
@@ -37,6 +37,7 @@ export default function TrackService() {
   ];
 
   const provider = providersData.find(p => p.name === booking.provider) || providersData[0];
+  const mapQuery = encodeURIComponent(`${booking.address}, ${booking.city}`);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -51,20 +52,13 @@ export default function TrackService() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-[2] bg-gray-200 rounded-2xl border border-[var(--color-border-main)] min-h-[400px] relative overflow-hidden flex flex-col items-center justify-center">
-          <div className="absolute inset-0 opacity-20" style={{
-            backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
-          }}></div>
-          
-          <div className="z-10 bg-white p-6 rounded-2xl shadow-lg max-w-sm text-center">
-            <MapIcon size={48} className="text-gray-400 mx-auto mb-4" />
-            <h3 className="font-bold text-[var(--color-text-main)] mb-2">Map View Simulated</h3>
-            <p className="text-sm text-[var(--color-text-muted)]">Live GPS tracking for {booking.provider} will appear here.</p>
+        <div className="flex-[2] bg-slate-950 rounded-2xl border border-[var(--color-border-main)] min-h-[400px] relative overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-3 text-white">
+            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300"><MapPin size={15} /> Google Maps Location</span>
+            <a href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs text-sky-300 hover:text-white">Open in Maps <ExternalLink size={13} /></a>
           </div>
-
-          <button className="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-md text-[var(--color-primary-600)] hover:bg-gray-50 transition-colors">
-            <Crosshair size={24} />
-          </button>
+          <iframe title="Customer service location" src={`https://www.google.com/maps?q=${mapQuery}&output=embed`} className="min-h-[350px] flex-1 border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          <div className="border-t border-slate-800 bg-slate-900 px-4 py-3 text-xs text-slate-300">{booking.address}, {booking.city}</div>
         </div>
 
         <div className="flex-1 flex flex-col gap-6">

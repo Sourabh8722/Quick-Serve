@@ -32,7 +32,7 @@ type AuthContextValue = {
   register: (payload: RegisterPayload) => Promise<AuthUser>;
   logout: () => void;
   fetchUsers: () => Promise<AuthUser[]>;
-  updateUser: (id: string, updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'profession' | 'businessName'>>) => Promise<AuthUser | undefined>;
+  updateUser: (id: string, updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'email' | 'mobileNumber' | 'profession' | 'businessName'>>) => Promise<AuthUser | undefined>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -94,10 +94,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = async (
     id: string,
-    updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'profession' | 'businessName'>>
+    updates: Partial<Pick<AuthUser, 'providerStatus' | 'name' | 'email' | 'mobileNumber' | 'profession' | 'businessName'>>
   ) => {
     try {
       const response = await axios.patch(`${API_URL}/users/${id}`, updates);
+      if (user?.id === id) {
+        setUser(response.data);
+        localStorage.setItem('quickservice_active_user', JSON.stringify(response.data));
+      }
       return response.data;
     } catch (error) {
       console.error('Failed to update user', error);

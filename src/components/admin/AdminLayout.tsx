@@ -30,6 +30,7 @@ const AdminSidebar = () => {
     { name: 'Reviews', path: '/admin/reviews', icon: <Star size={20} /> },
     { name: 'Offers/Coupons', path: '/admin/offers', icon: <Tag size={20} /> },
     { name: 'Reports', path: '/admin/reports', icon: <FileBarChart size={20} /> },
+    { name: 'Notifications', path: '/admin/notifications', icon: <Bell size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
   ];
 

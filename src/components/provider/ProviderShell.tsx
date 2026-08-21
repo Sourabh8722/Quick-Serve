@@ -17,6 +17,7 @@ import {
   PlayCircle,
   CheckCircle2,
   MessageSquare
+  , Bell
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -35,6 +36,7 @@ const navItems: NavItem[] = [
   { label: 'Availability', href: '/provider/availability', icon: Clock3 },
   { label: 'Reviews', href: '/provider/reviews', icon: MessageCircleMore },
   { label: 'Customer Chat', href: '/provider/chat', icon: MessageSquare },
+  { label: 'Notifications', href: '/provider/notifications', icon: Bell },
   { label: 'Profile', href: '/provider/profile', icon: UserCircle2 },
 ];
 

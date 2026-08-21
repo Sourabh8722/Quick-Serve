@@ -16,6 +16,7 @@ import Payments from './pages/customer/Payments';
 import Reviews from './pages/customer/Reviews';
 import Chat from './pages/customer/Chat';
 import Profile from './pages/customer/Profile';
+import CustomerNotifications from './pages/customer/Notifications';
 
 import AuthLogin from './pages/AuthLogin';
 import AuthRegister from './pages/AuthRegister';
@@ -33,6 +34,7 @@ import ComplaintsManagement from './pages/admin/ComplaintsManagement';
 import ReviewsManagement from './pages/admin/ReviewsManagement';
 import OffersManagement from './pages/admin/OffersManagement';
 import ReportsManagement from './pages/admin/ReportsManagement';
+import AdminNotifications from './pages/admin/Notifications';
 
 import ProviderRoute from './components/auth/ProviderRoute';
 import AdminRoute from './components/auth/AdminRoute';
@@ -52,6 +54,7 @@ import EarningsPage from './pages/provider/EarningsPage';
 import ReviewsPage from './pages/provider/ReviewsPage';
 import AvailabilityPage from './pages/provider/AvailabilityPage';
 import ChatPage from './pages/provider/ChatPage';
+import ProviderNotifications from './pages/provider/NotificationsPage';
 
 const queryClient = new QueryClient();
 
@@ -75,6 +78,7 @@ function App() {
             <Route path="/dashboard/payments" element={<Payments />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
             <Route path="/dashboard/chat" element={<Chat />} />
+            <Route path="/dashboard/notifications" element={<CustomerNotifications />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/track" element={<TrackService />} />
             <Route path="/track/:id" element={<TrackService />} />
@@ -98,6 +102,7 @@ function App() {
             <Route path="/provider/availability" element={<AvailabilityPage />} />
             <Route path="/provider/reviews" element={<ReviewsPage />} />
             <Route path="/provider/chat" element={<ChatPage />} />
+            <Route path="/provider/notifications" element={<ProviderNotifications />} />
             <Route path="/provider/profile" element={<ProviderProfile />} />
           </Route>
 
@@ -114,6 +119,7 @@ function App() {
             <Route path="offers" element={<OffersManagement />} />
             <Route path="reports" element={<ReportsManagement />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="notifications" element={<AdminNotifications />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

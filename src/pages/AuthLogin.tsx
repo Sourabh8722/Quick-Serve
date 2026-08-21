@@ -140,8 +140,6 @@ export default function AuthLogin() {
 
         <p className="text-xs text-center text-[var(--color-text-muted)] mt-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
           <strong>Demo Accounts (Pass: 12345):</strong><br/>
-          <span className="font-semibold mt-1 block">Admins:</span>
-          gayatrilengare@gmail.com | sourabhnarale@gmail.com<br/>
           <span className="font-semibold mt-1 block">Provider & Customer:</span>
           provider@quickservice.com | customer@quickservice.com
         </p>

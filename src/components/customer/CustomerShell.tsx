@@ -9,6 +9,7 @@ import {
   CreditCard, 
   Star, 
   MessageSquare, 
+  Bell,
   User,
   Menu,
   LogOut,
@@ -31,6 +32,7 @@ export default function CustomerShell() {
     { name: 'Payments', path: '/dashboard/payments', icon: CreditCard },
     { name: 'Reviews', path: '/dashboard/reviews', icon: Star },
     { name: 'Chat', path: '/dashboard/chat', icon: MessageSquare },
+    { name: 'Notifications', path: '/dashboard/notifications', icon: Bell },
     { name: 'Profile', path: '/profile', icon: User },
   ];
 

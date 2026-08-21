@@ -7,19 +7,27 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
+    email: user?.email || '',
+    mobileNumber: user?.mobileNumber || '',
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || '',
+        email: user.email || '',
+        mobileNumber: user.mobileNumber || '',
       });
     }
   }, [user]);
 
   const handleSave = async () => {
-    if (user) {
-      await updateUser(user.id, formData);
+    if (user && formData.name.trim() && formData.email.trim() && formData.mobileNumber.trim()) {
+      await updateUser(user.id, {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        mobileNumber: formData.mobileNumber.trim(),
+      });
       setIsEditing(false);
     }
   };
@@ -78,9 +86,13 @@ export default function Profile() {
                 <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
                   <Mail size={18} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</span>
-                  <span className="text-sm font-medium text-slate-900">{user.email}</span>
+                  {isEditing ? (
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm outline-none" />
+                  ) : (
+                    <span className="text-sm font-medium text-slate-900">{user.email}</span>
+                  )}
                 </div>
               </div>
 
@@ -88,9 +100,13 @@ export default function Profile() {
                 <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0">
                   <Phone size={18} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Mobile Number</span>
-                  <span className="text-sm font-medium text-slate-900">{user.mobileNumber || 'Not provided'}</span>
+                  {isEditing ? (
+                    <input type="tel" value={formData.mobileNumber} onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm outline-none" />
+                  ) : (
+                    <span className="text-sm font-medium text-slate-900">{user.mobileNumber || 'Not provided'}</span>
+                  )}
                 </div>
               </div>
 

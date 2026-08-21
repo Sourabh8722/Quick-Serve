@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { serviceCategories } from '../data/services';
 import { UserPlus, Mail, Lock, Briefcase, Home, Phone, CheckCircle2 } from 'lucide-react';
 
 const DEMO_OTP = '123456';
@@ -275,12 +276,16 @@ export default function AuthRegister() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[var(--color-text-main)] mb-2">Service category</label>
-                <input
+                <select
                   value={profession}
                   onChange={(e) => setProfession(e.target.value)}
-                  placeholder="Plumbing, cleaning, electrical..."
                   className="w-full border border-[var(--color-border-main)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-main)] outline-none"
-                />
+                >
+                  <option value="" disabled>Select a service category</option>
+                  {serviceCategories.filter((category) => category !== 'All Services').map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
